@@ -1,0 +1,80 @@
+import BaseLayout from './BaseLayout'
+import css from './EmbedLayout.css'
+import {autobind} from 'core-decorators'
+import {removeFromDOM, setClass, toggleClass, findById} from '../utils/DOM'
+import {once} from '../utils/decorators'
+
+export default class EmbedLayout extends BaseLayout {
+
+  /**
+   * @param {String} spinner - HTML шаблон спиннера
+   */
+  constructor(config = {}) {
+    super(config)
+    this.spinner = config.spinner || ''
+    this.contentId = `${this.id}_content`
+    this.loaderId = `${this.id}_loader`
+    this.element.innerHTML = `
+      <div class="${css.Wrapper}">
+        ${this.spinner ? `<div class="${css.Loader}" id="${this.loaderId}">${this.spinner}</div>` : ''}
+        <div class="${css.Content}" id="${this.contentId}"></div>
+      </div>
+    `
+    this.contentElement = findById(this.contentId, this.element)
+    this.loaderElement = findById(this.loaderId, this.element)
+    setClass(this.element, css.EmbedLayout, css['is-loading'])
+  }
+
+  /**
+   * Добавить текущий объект к контейнеру
+   * @param {Container} container - Контейнер, к которому добавляем текущий элемент
+   */
+  addToDOM(container) {
+    this.container = container
+    this.container.appendChild(this.getElement())
+  }
+
+  /**
+   * Показать загрузчик
+   */
+  showLoading() {
+    this.toggleLoading(true)
+  }
+
+  /**
+   * Скрыть загрузчик
+   */
+  hideLoading() {
+    this.toggleLoading(false)
+  }
+
+  /**
+   * Показать/скрыть лоадер
+   * @param {Boolean} show - Флаг скрытия/показа лоадера
+   */
+  toggleLoading(show) {
+    toggleClass(this.element, css['is-loading'], show)
+    toggleClass(this.loaderElement, css['is-shown'], show)
+  }
+
+  /**
+   * Установить контент в лэйауте
+   * @param {ContentElement} content - Контент лэйаута
+   */
+  setContent(content) {
+    this.content = content
+    this.contentElement.appendChild(content.getElement())
+  }
+
+  /**
+   * Удаление элемента из DOM
+   * В этот момент происходит отписка от событий
+   */
+  @autobind
+  @once
+  destroy() {
+    removeFromDOM(this.element)
+    this.emit('destroy')
+  }
+
+}
