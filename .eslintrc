@@ -10,11 +10,8 @@
       experimentalObjectRestSpread: true
       jsx: true
     sourceType: "module"
-  plugins: ["react", "babel", "import"]
+  plugins: ["babel", "import"]
   rules:
-    react/jsx-uses-vars: 1
-    react/jsx-uses-react: 1
-    react/jsx-curly-spacing: ["error", "never"]
     indent: ["error", 2]
     linebreak-style: ["error", "unix"]
     quotes: ["error", "single"]
@@ -36,10 +33,6 @@
     no-use-before-define: ["off"]
     import/no-unresolved: ["warn"]
     no-underscore-dangle: ["off"]
-  settings:
-    import/resolver:
-      webpack:
-        config: 'webpack/config.js'
   globals:
     __DEV__: true
     __PRODUCTION__: true

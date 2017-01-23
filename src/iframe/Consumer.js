@@ -23,6 +23,7 @@ export default class IFrameConsumer {
    * @param {Object} config Конфиг
    * @param {Function} config.initialize - Функция инициализации виджета. Должна отрисовывать приложение
    * @param {Function} [config.externalizeAsConsumer] - Этот метод должен возвращать фасад с методами, которые будут доступны виджету
+   * @param {Function} [config.externalize] - Этот метод должен возвращать фасад с методами, которые видны снаружи виджета (вебмастеру)
    * @param {Object} properties Общие свойства
    *
    * Имеет следуюшие свойства
@@ -69,8 +70,19 @@ export default class IFrameConsumer {
             })
           })
         )
-      )
+      ),
+      externalizedProps: this.externalize()
     }
+  }
+
+  /**
+   * Этот метод возвращает внешние свойства, доступные вебмастеру
+   * @return {Object}
+   */
+  externalize() {
+    if (this.config.externalize)
+      return this.config.externalize.call(this)
+    return this.properties
   }
 
 }

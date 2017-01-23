@@ -27,7 +27,7 @@ export default class OverlayLayout extends BaseLayout {
     `
     this.contentElement = findById(this.contentId, this.element)
     this.loaderElement = findById(this.loaderId, this.element)
-    setClass(this.element, css.OverlayLayout, css['is-loading'], options.className)
+    setClass(this.element, css.OverlayLayout, css['is-hidden'], options.className)
     onRemoveFromDOM(this.element, this.destroy)
   }
 
@@ -99,4 +99,3 @@ export default class OverlayLayout extends BaseLayout {
   }
 
 }
-

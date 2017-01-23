@@ -121,7 +121,7 @@ export default class Widget {
   externalize() {
     return {
       ...this.properties,
-      ...this._getIFrameConsumerFacade(),
+      ...(this.iframe ? this.iframe.consumer.externalizedProps : {}),
       ...this.externalizeEmitter(),
       destroy: ::this.destroy,
       params: this.params
@@ -168,13 +168,6 @@ export default class Widget {
   _subscribeVisibleAreaChange(offset, callback) {
     if (this.iframe)
       this.iframe.subscribeVisibleAreaChange(offset, callback)
-  }
-
-  /**
-   * Возвращает интерфейс айфрейма
-   */
-  _getIFrameConsumerFacade() {
-    return this.iframe ? this.iframe.consumer : {}
   }
 
   _subscribeEvents() {

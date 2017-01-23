@@ -1,12 +1,13 @@
 {
   "name": "widgetly",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Library helps you to create iframe-widgets",
   "main": "lib/index.js",
   "scripts": {
-    "build": "",
-    "prepublish": "",
-    "eslint": "./node_modules/eslint/bin/eslint.js --fix src/** webpack/** *.js",
+    "build": "./node_modules/babel-cli/bin/babel.js src --out-dir lib",
+    "precommit": "npm run build && npm run eslint",
+    "prepublish": "npm run build && npm run eslint",
+    "eslint": "./node_modules/eslint/bin/eslint.js --fix src/** *.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
