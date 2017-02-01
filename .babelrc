@@ -1,6 +1,12 @@
 {
   "presets": ["es2015", "stage-0"],
-  "plugins": ["transform-decorators-legacy"],
+  "plugins": [
+    "transform-decorators-legacy",
+    "transform-class-properties",
+    "transform-async-to-generator",
+    "lodash",
+    "transform-runtime"
+  ],
   "env": {
     "development": {}
   }
