@@ -1,6 +1,6 @@
 {
   "name": "widgetly",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Library helps you to create iframe-widgets",
   "main": "lib/index.js",
   "scripts": {

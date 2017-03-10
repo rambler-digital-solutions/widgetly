@@ -6,6 +6,7 @@ import classnames from 'classnames'
 import domready from 'domready'
 import throttle from 'lodash/throttle'
 import forOwn from 'lodash/forOwn'
+import debounce from 'lodash/debounce'
 import EventEmitter from 'events'
 import {scrollToTop} from './scroll'
 
@@ -25,9 +26,9 @@ const MutationObserver =
  * Создаем mutationObserver
  */
 export const mutationEvents = new EventEmitter
-export const mutationObserver = new MutationObserver((e) =>
+export const mutationObserver = new MutationObserver((e) => {
   mutationEvents.emit('mutation', e)
-)
+})
 
 /**
  * Следим за scroll окно
@@ -43,15 +44,16 @@ window.addEventListener('resize', onViewportChangeHandler)
  * @param {Function} callback - Функция-обработчик
  */
 export function onRemoveFromDOM(element, callback) {
-  if (isElementInDOM(element))
-    mutationEvents.on('mutation', onMutation)
-
-  function onMutation() {
-    if (!isElementInDOM(element)) {
+  let prevElementInDom = isElementInDOM(element)
+  const onMutation = debounce(() => {
+    const elementInDom = isElementInDOM(element)
+    if (!elementInDom && prevElementInDom) {
       mutationEvents.removeListener('mutation', onMutation)
       callback()
     }
-  }
+    prevElementInDom = elementInDom
+  })
+  mutationEvents.on('mutation', onMutation)
 }
 
 /**

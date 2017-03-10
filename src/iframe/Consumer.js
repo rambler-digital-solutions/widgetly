@@ -36,9 +36,9 @@ export default class IFrameConsumer {
     this.provider = null
 
     forOwn(properties, (value, key) => {
-      if (isUndefined(this[key]))
-        this[key] = value
       this.properties[key] = isFunction(value) ? value.bind(this) : value
+      if (isUndefined(this[key]))
+        this[key] = this.properties[key]
     })
 
     this.transport = new Consumer(this.id, '*', this.externalizeAsConsumer())
