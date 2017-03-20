@@ -1,5 +1,5 @@
 import EventEmitter from './utils/EventEmitter'
-import {onRemoveFromDOM, viewportEvents} from './utils/DOM'
+import {onRemoveFromDOM, createViewportManager} from './utils/DOM'
 import {isVisible} from './utils/DOM/viewport'
 import {once} from './utils/decorators'
 import {autobind, mixin} from 'core-decorators'
@@ -38,7 +38,8 @@ export default class Container {
   destroy() {
     this.emit('destroy')
     this.removeAllListeners()
-    viewportEvents.removeListener('change', this._onScroll)
+    if (this.viewportManager)
+      this.viewportManager.destroy()
   }
 
   updateViewport() {
@@ -47,7 +48,8 @@ export default class Container {
 
   @once
   _subscribeScroll() {
-    viewportEvents.on('change', this._onScroll)
+    if (!this.viewportManager)
+      this.viewportManager = createViewportManager(this.element, this._onScroll)
   }
 
   @autobind

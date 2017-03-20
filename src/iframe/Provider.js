@@ -3,7 +3,7 @@ import {Provider} from 'magic-transport'
 import iframeResizer from 'iframe-resizer/js/iframeResizer'
 import {parse as parseUrl} from 'url'
 import {autobind, mixin} from 'core-decorators'
-import {removeFromDOM, onRemoveFromDOM, viewportEvents} from '../utils/DOM'
+import {removeFromDOM, onRemoveFromDOM, createViewportManager} from '../utils/DOM'
 import {once} from '../utils/decorators'
 import {getVisibleArea} from '../utils/DOM/viewport'
 import EventEmitter from '../utils/EventEmitter'
@@ -98,7 +98,8 @@ export default class IFrameProvider extends ContentElement {
   @once
   subscribeViewportChange() {
     this.widget.on('viewportUpdated', this.onViewportChange)
-    viewportEvents.on('change', this.onViewportChange)
+    if (!this.viewportManager)
+      this.viewportManager = createViewportManager(this.element, this.onViewportChange)
   }
 
   /**
@@ -126,7 +127,8 @@ export default class IFrameProvider extends ContentElement {
     this.emit('destroy')
     this.transport.destroy()
     this.removeAllListeners()
-    viewportEvents.removeListener('change', this.onViewportChange)
+    if (this.viewportManager)
+      this.viewportManager.destroy()
   }
 
 }

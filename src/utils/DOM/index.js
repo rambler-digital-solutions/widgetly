@@ -4,11 +4,10 @@
 import 'classlist.js'
 import classnames from 'classnames'
 import domready from 'domready'
-import throttle from 'lodash/throttle'
 import forOwn from 'lodash/forOwn'
 import debounce from 'lodash/debounce'
 import EventEmitter from 'events'
-import {scrollToTop} from './scroll'
+import {scrollToTop, getScroll} from './scroll'
 
 const MutationObserver =
   window.MutationObserver ||
@@ -33,10 +32,33 @@ export const mutationObserver = new MutationObserver((e) => {
 /**
  * Следим за scroll окно
  */
-export const viewportEvents = new EventEmitter
-const onViewportChangeHandler = throttle((e) => (viewportEvents.emit('change', e)), 150)
+export const globalViewportEvents = new EventEmitter
+const onViewportChangeHandler = (e) => {
+  globalViewportEvents.emit('change', e)
+}
 window.addEventListener('scroll', onViewportChangeHandler)
 window.addEventListener('resize', onViewportChangeHandler)
+
+export function createViewportManager(element, callback) {
+  const debouncedCallback = debounce(callback, 200)
+  let parent
+  let subscribedOnParentScroll
+  if (element) {
+    parent = findScrollableParent(element, true)
+    if (parent && parent !== document.body && parent !== document.documentElement) {
+      parent.addEventListener('scroll', debouncedCallback, false)
+      subscribedOnParentScroll = true
+    }
+  }
+  globalViewportEvents.on('change', debouncedCallback)
+  return {
+    destroy() {
+      globalViewportEvents.removeListener('change', debouncedCallback)
+      if (subscribedOnParentScroll)
+        parent.removeEventListener('scroll', debouncedCallback, false)
+    }
+  }
+}
 
 /**
  * Обработчик удаления элемента из DOM
@@ -160,14 +182,16 @@ export function scrollByElementTo(element, top, duration = 200) {
     return
   const {top: elementTop} = element.getBoundingClientRect()
   const {top: parentTop} = parent.getBoundingClientRect()
-  const newScrollTop = elementTop - parentTop + top
+  let newScrollTop = elementTop - parentTop + top
+  if (parent !== document.body && parent !== document.documentElement)
+    newScrollTop += getScroll(parent)
   return scrollToTop(parent, newScrollTop, duration)
 }
 
-function findScrollableParent(element) {
+function findScrollableParent(element, noCheckScrollHeight) {
   if (!element || document === document.documentElement)
     return document.documentElement
-  if (element.scrollHeight > element.clientHeight ||
+  if (noCheckScrollHeight || element.scrollHeight > element.clientHeight ||
     element === document.body ||
     element === document.documentElement) {
     const overflowY = getComputedStyle(element).overflowY

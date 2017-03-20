@@ -6,10 +6,29 @@ const requestAnimFrame =
   window.mozRequestAnimationFrame ||
   ((callback) => setTimeout(callback, 1000 / 60))
 
+/**
+ * Установить новое значения скролла для элемента
+ */
+export function setScroll(element, value) {
+  if (element === document.body || element === document.documentElement)
+    window.scrollTo(0, value)
+  else
+    element.scrollTop = value
+}
+
+/**
+ * Получить текущий скролл элемента
+ */
+export function getScroll(element) {
+  if (element === document.body || element === document.documentElement)
+    return document.body.scrollTop || document.documentElement.scrollTop
+  return element.scrollTop
+}
+
 export function scrollToTop(element, scrollTargetY, duration = 200, easing = 'easeIn') {
   return new Promise((resolve) => {
     const linear = ((pos) => pos)
-    const scrollY = getCurrentScroll()
+    const scrollY = getScroll(element)
     let currentTime = 0
     scrollTargetY = Math.max(scrollTargetY, 0)
 
@@ -25,24 +44,11 @@ export function scrollToTop(element, scrollTargetY, duration = 200, easing = 'ea
       if (p < 1) {
         requestAnimFrame(tick)
         const resScroll = Math.round(scrollY + ((scrollTargetY - scrollY) * t))
-        setScroll(resScroll)
+        setScroll(element, resScroll)
       } else {
-        setScroll(scrollTargetY)
+        setScroll(element, scrollTargetY)
         resolve()
       }
-    }
-
-    function setScroll(value) {
-      if (element === document.body || element === document.documentElement)
-        window.scrollTo(0, value)
-      else
-        element.scrollTop = value
-    }
-
-    function getCurrentScroll() {
-      if (element === document.body || element === document.documentElement)
-        return document.body.scrollTop || document.documentElement.scrollTop
-      return element.scrollTop
     }
 
     tick()
