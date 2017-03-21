@@ -189,7 +189,8 @@ export function scrollByElementTo(element, top, duration = 200) {
 }
 
 function findScrollableParent(element, noCheckScrollHeight) {
-  if (!element || document === document.documentElement)
+  element = element.parentElement
+  if (!element || element === document.documentElement)
     return document.documentElement
   if (noCheckScrollHeight || element.scrollHeight > element.clientHeight ||
     element === document.body ||
@@ -198,7 +199,7 @@ function findScrollableParent(element, noCheckScrollHeight) {
     if (overflowY === 'auto' || overflowY === 'scroll')
       return element
   }
-  return findScrollableParent(element.parentNode)
+  return findScrollableParent(element, noCheckScrollHeight)
 }
 
 domready(() => {
