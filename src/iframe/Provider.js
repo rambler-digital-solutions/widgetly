@@ -8,8 +8,6 @@ import {once} from '../utils/decorators'
 import {getVisibleArea} from '../utils/DOM/viewport'
 import EventEmitter from '../utils/EventEmitter'
 
-const DEFAULT_OFFSET = 100
-
 @mixin(EventEmitter.prototype)
 export default class IFrameProvider extends ContentElement {
 
@@ -18,6 +16,9 @@ export default class IFrameProvider extends ContentElement {
    * @param {String} options.url - URL по которому нужно загрузить iframe
    * @param {Widget} options.widget - Объект виджета
    * @param {String} options.id - Уникальный идентификатор виджета
+   *
+   * @events
+   * viewportChange - событие которое вызывается, когда вьюпорт элемента изменени
    */
   constructor(url, widget, id) {
     super()
@@ -74,16 +75,12 @@ export default class IFrameProvider extends ContentElement {
     return this.consumer
   }
 
-    /**
-   * Функция вызовется при изменении viewport контента (айфрейма)
-   * @param {Number} [offset]
+  /**
+   * Подписка на изменение видимой области iframe
+   *
    */
-  subscribeVisibleAreaChange(offset, callback) {
-    if (typeof offset === 'function') {
-      callback = offset
-      offset = DEFAULT_OFFSET
-    }
-    this.subscribeViewportChange()
+  subscribeVisibleAreaChange(callback) {
+    this._subscribeViewportChange()
     this.on('viewportChange', () => {
       callback(this.getVisibleArea())
     })
@@ -96,17 +93,16 @@ export default class IFrameProvider extends ContentElement {
 
 
   @once
-  subscribeViewportChange() {
-    this.widget.on('viewportUpdated', this.onViewportChange)
+  _subscribeViewportChange() {
     if (!this.viewportManager)
-      this.viewportManager = createViewportManager(this.element, this.onViewportChange)
+      this.viewportManager = createViewportManager(this.element, this.updateViewport)
   }
 
   /**
    * Обработчик скролла
    */
   @autobind
-  onViewportChange() {
+  updateViewport() {
     this.emit('viewportChange')
   }
 

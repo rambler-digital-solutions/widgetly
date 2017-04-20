@@ -90,7 +90,8 @@ export default class Widget {
   updateViewport() {
     if (this.container)
       this.container.updateViewport()
-    this.emit('viewportUpdated')
+    if (this.iframe)
+      this.iframe.updateViewport()
   }
 
   @autobind

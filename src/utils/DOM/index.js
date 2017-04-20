@@ -39,6 +39,12 @@ const onViewportChangeHandler = (e) => {
 window.addEventListener('scroll', onViewportChangeHandler)
 window.addEventListener('resize', onViewportChangeHandler)
 
+/**
+ * Создает сущность, которая следит за изменением viewport элемента
+ * @param  {HTMLElement} element  - Элемент
+ * @param  {Function}    callback - Колбек изменения вьюпорта
+ * @return {Object}      Объект со свойством "destroy"
+ */
 export function createViewportManager(element, callback) {
   const debouncedCallback = debounce(callback, 200)
   let parent
