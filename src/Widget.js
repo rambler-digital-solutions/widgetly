@@ -159,7 +159,7 @@ export default class Widget {
    */
   async _iFrameScrollTo(top, duration) {
     await scrollByElementTo(this.iframe.getElement(), top, duration)
-    this.iframe.onViewportChange()
+    this.iframe.updateViewport()
   }
 
   /**
