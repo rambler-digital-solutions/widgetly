@@ -22,7 +22,7 @@ export default class EmbedLayout extends BaseLayout {
     `
     this.contentElement = findById(this.contentId, this.element)
     this.loaderElement = findById(this.loaderId, this.element)
-    setClass(this.element, css.EmbedLayout, css['is-loading'])
+    setClass(this.element, css.EmbedLayout, css['is-hidden'])
   }
 
   /**
@@ -46,6 +46,20 @@ export default class EmbedLayout extends BaseLayout {
    */
   hideLoading() {
     this.toggleLoading(false)
+  }
+
+  /**
+   * Скрыть лэйаут
+   */
+  hide() {
+    toggleClass(this.element, css['is-hidden'], true)
+  }
+
+  /**
+   * Показать лэйаут
+   */
+  show() {
+    toggleClass(this.element, css['is-hidden'], false)
   }
 
   /**

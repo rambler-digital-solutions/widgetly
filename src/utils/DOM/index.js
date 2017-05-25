@@ -13,7 +13,7 @@ const MutationObserver =
   window.MutationObserver ||
   window.WebKitMutationObserver ||
   window.MozMutationObserver ||
-  ((callback) => {
+  (function MutationObserverPolyfill(callback) {
     let interval
     return {
       observe() { interval = setInterval(callback, 2e3) },
