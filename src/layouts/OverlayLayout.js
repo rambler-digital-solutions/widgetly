@@ -6,6 +6,8 @@ import {autobind} from 'core-decorators'
 import {once} from '../utils/decorators'
 import {removeFromDOM, onRemoveFromDOM, setClass, toggleClass, findById} from '../utils/DOM'
 
+const ANIMATION_DURATION = 200
+
 export default class OverlayLayout extends BaseLayout {
 
   /**
@@ -35,8 +37,10 @@ export default class OverlayLayout extends BaseLayout {
    * Показать текущий лэйаут
    */
   addToDOM() {
-    if (this.config.hidden)
+    if (this.config.hidden) {
+      this.moveBehind()
       this.hide()
+    }
     this.container = document.body
     this.container.appendChild(this.getElement())
   }
@@ -55,11 +59,23 @@ export default class OverlayLayout extends BaseLayout {
     this.toggleLoading(false)
   }
 
+  @autobind
+  moveBehind() {
+    toggleClass(this.element, css['is-behind'], true)
+  }
+
+  @autobind
+  moveFront() {
+    toggleClass(this.element, css['is-behind'], false)
+  }
+
   /**
    * Скрыть лэйаут
    */
   hide() {
     toggleClass(this.element, css['is-hidden'], true)
+    clearTimeout(this.moveBehindTimeout)
+    this.moveBehindTimeout = setTimeout(this.moveBehind, ANIMATION_DURATION)
   }
 
   /**
@@ -67,6 +83,8 @@ export default class OverlayLayout extends BaseLayout {
    */
   show() {
     toggleClass(this.element, css['is-hidden'], false)
+    clearTimeout(this.moveBehindTimeout)
+    this.moveFront()
   }
 
   /**
@@ -94,6 +112,7 @@ export default class OverlayLayout extends BaseLayout {
   @autobind
   @once
   destroy() {
+    clearTimeout(this.moveBehindTimeout)
     removeFromDOM(this.element)
     this.emit('destroy')
   }

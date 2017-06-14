@@ -14,6 +14,8 @@
   &.is-hidden {
     opacity: 0;
     pointer-events: none;
+  }
+  &.is-behind {
     z-index: -1;
   }
 
