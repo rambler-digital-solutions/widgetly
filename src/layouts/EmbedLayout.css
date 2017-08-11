@@ -7,6 +7,9 @@
   &.is-hidden {
     display: none;
   }
+  * {
+    box-sizing: border-box;
+  }
 }
 
 .Loader {
@@ -29,5 +32,5 @@
 }
 
 .Wrapper {
-
+  position: static;
 }

@@ -16,13 +16,12 @@
     pointer-events: none;
   }
   &.is-behind {
+    visibility: hidden;
     z-index: -1;
   }
-
   &__wrapper {
-
+    position: static;
   }
-
   &__content, &__content > iframe {
     position: absolute;
     left: 0;
@@ -30,6 +29,9 @@
     right: 0;
     bottom: 0;
     height: 100% !important;
+  }
+  * {
+    box-sizing: border-box;
   }
 }
 
