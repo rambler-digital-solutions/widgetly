@@ -11,13 +11,16 @@ const ANIMATION_DURATION = 200
 export default class OverlayLayout extends BaseLayout {
 
   /**
-   * @param {Object} options - опции
-   * @param {String} [options.spinner] - HTML шаблон спиннера
-   * @param {String} [options.className] - css-класс, который добавляем к элементу
+   * @param {Object} config - опции
+   * @param {String} [config.spinner] - HTML шаблон спиннера
+   * @param {String} [config.className] - css-класс, который добавляем к элементу
+   * @param {Number} [config.animationDuration = 200] - длительность opacity анимации в ms
    */
-  constructor(options = {}) {
-    super(options)
-    this.spinner = options.spinner
+  constructor(config = {}) {
+    super(config)
+    if (this.config.animationDuration === undefined)
+      this.config.animationDuration = ANIMATION_DURATION
+    this.spinner = config.spinner
     this.element = document.createElement('div')
     this.contentId = `${this.id}_content`
     this.loaderId = `${this.id}_loader`
@@ -29,7 +32,7 @@ export default class OverlayLayout extends BaseLayout {
     `
     this.contentElement = findById(this.contentId, this.element)
     this.loaderElement = findById(this.loaderId, this.element)
-    setClass(this.element, css.OverlayLayout, css['is-hidden'], options.className)
+    setClass(this.element, css.OverlayLayout, css['is-hidden'], config.className, !!this.config.animationDuration && css['no-animate'])
     onRemoveFromDOM(this.element, this.destroy)
   }
 
@@ -75,7 +78,7 @@ export default class OverlayLayout extends BaseLayout {
   hide() {
     toggleClass(this.element, css['is-hidden'], true)
     clearTimeout(this.moveBehindTimeout)
-    this.moveBehindTimeout = setTimeout(this.moveBehind, ANIMATION_DURATION)
+    this.moveBehindTimeout = setTimeout(this.moveBehind, this.config.animationDuration)
   }
 
   /**
