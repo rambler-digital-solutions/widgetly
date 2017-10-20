@@ -1,7 +1,6 @@
 /**
  * Дополнительные хелперы
  */
-import 'classlist.js'
 import classnames from 'classnames'
 import domready from 'domready'
 import forOwn from 'lodash/forOwn'

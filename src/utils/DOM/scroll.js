@@ -1,5 +1,3 @@
-import easingEquations from 'easing-js'
-
 const requestAnimFrame =
   window.requestAnimationFrame ||
   window.webkitRequestAnimationFrame ||
@@ -25,7 +23,7 @@ export function getScroll(element) {
   return element.scrollTop
 }
 
-export function scrollToTop(element, scrollTargetY, duration = 200, easing = 'easeIn') {
+export function scrollToTop(element, scrollTargetY, duration = 200) {
   return new Promise((resolve) => {
     const linear = ((pos) => pos)
     const scrollY = getScroll(element)
@@ -39,7 +37,7 @@ export function scrollToTop(element, scrollTargetY, duration = 200, easing = 'ea
       currentTime += 1 / 60
 
       const p = currentTime / (duration / 1e3)
-      const t = (easingEquations[easing] || linear)(p)
+      const t = linear(p)
 
       if (p < 1) {
         requestAnimFrame(tick)

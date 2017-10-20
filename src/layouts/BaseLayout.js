@@ -1,8 +1,7 @@
-import {virtual} from '../utils/decorators'
+import {virtual, mixin} from '../utils/decorators'
 import EventEmitter from '../utils/EventEmitter'
 import {onRemoveFromDOM} from '../utils/DOM'
 import randomId from '../utils/randomId'
-import {mixin} from 'core-decorators'
 
 /**
  * Класс с базовым layout

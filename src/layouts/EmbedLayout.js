@@ -1,8 +1,7 @@
 import BaseLayout from './BaseLayout'
 import css from './EmbedLayout.css'
-import {autobind} from 'core-decorators'
 import {removeFromDOM, setClass, toggleClass, findById} from '../utils/DOM'
-import {once} from '../utils/decorators'
+import {once, autobind} from '../utils/decorators'
 
 export default class EmbedLayout extends BaseLayout {
 

@@ -1,9 +1,8 @@
 import {forOwn, isUndefined, isFunction} from 'lodash'
-import {autobind, mixin} from 'core-decorators'
 import IFrame from './iframe/Provider'
 import EventEmitter from './utils/EventEmitter'
 import {scrollByElementTo} from './utils/DOM'
-import {once} from './utils/decorators'
+import {once, mixin, autobind} from './utils/decorators'
 
 /**
  * Класс виджета

@@ -15,9 +15,29 @@ export const once = (target, key, descriptor) => ({
   }
 })
 
+export const autobind = (target, key, {value: fn, configurable, enumerable}) => ({
+  configurable,
+  enumerable,
+  get() {
+    const boundFn = fn.bind(this)
+    Object.defineProperty(this, key, {
+      configurable: true,
+      writable: true,
+      enumerable: false,
+      value: boundFn
+    })
+    return boundFn
+  }
+})
+
 export const virtual = (target, key, descriptor) => ({
   ...descriptor,
   value() {
     throw new Error(`Method "${key}" should be overrided`)
   }
 })
+
+export const mixin = (prototype) => (target) => {
+  Object.assign(target.prototype, prototype)
+  return target
+}

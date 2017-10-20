@@ -2,8 +2,7 @@
 
 import BaseLayout from './BaseLayout'
 import css from './OverlayLayout.css'
-import {autobind} from 'core-decorators'
-import {once} from '../utils/decorators'
+import {once, autobind} from '../utils/decorators'
 import {removeFromDOM, onRemoveFromDOM, setClass, toggleClass, findById} from '../utils/DOM'
 
 const ANIMATION_DURATION = 200

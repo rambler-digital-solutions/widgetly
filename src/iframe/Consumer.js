@@ -3,15 +3,27 @@ import {parse as parseUrl} from 'url'
 import forOwn from 'lodash/forOwn'
 import isUndefined from 'lodash/isUndefined'
 import isFunction from 'lodash/isFunction'
+import {mutationEvents} from '../utils/DOM'
 
 class IFrameResizer {
 
-  constructor(options) {
-    window.iFrameResizer = options
-    /* eslint-disable global-require */
-    require('iframe-resizer/js/iframeResizer.contentWindow')
-    /* eslint-enable global-require */
-    this.parent = window.parentIFrame
+  constructor(transport) {
+    this.transport = transport
+  }
+
+  getSize() {
+    return {
+      width: document.body.offsetWidth,
+      height: document.body.offsetHeight
+    }
+  }
+
+  resize() {
+    this.transport.provider.setSize(this.getSize())
+  }
+
+  watchSize() {
+    mutationEvents.on('mutation', ::this.resize)
   }
 
 }
@@ -42,6 +54,7 @@ export default class IFrameConsumer {
     })
 
     this.transport = new Consumer(this.id, '*', this.externalizeAsConsumer())
+    this.resizer = new IFrameResizer(this.transport)
     this.consumer = this.transport.consumer
     this.transport.once('ready', () => {
       this.provider = this.transport.provider
@@ -59,19 +72,13 @@ export default class IFrameConsumer {
     return {
       ...(this.config.externalizeAsConsumer ? this.config.externalizeAsConsumer.call(this) : this.properties),
       // Эту функцию должен вызывать provider для инициализации
-      initialize: () => (
-        Promise.resolve(this.config.initialize.call(this, this.provider)).then(() =>
-          new Promise((resolve) => {
-            this.resizer = new IFrameResizer({
-              targetOrigin: '*',
-              readyCallback: () => (
-                resolve()
-              )
-            })
-          })
-        )
-      ),
-      externalizedProps: this.externalize()
+      initialize: () => this.config.initialize.call(this, this.provider),
+      externalizedProps: this.externalize(),
+      getSize: () => this.resizer.getSize(),
+      watchSize: () => this.resizer.watchSize(),
+      resize: (params) => {
+        this.resizer.resize(params)
+      }
     }
   }
 

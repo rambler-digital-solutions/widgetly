@@ -1,8 +1,7 @@
 import EventEmitter from './utils/EventEmitter'
 import {onRemoveFromDOM, createViewportManager} from './utils/DOM'
 import {isVisible} from './utils/DOM/viewport'
-import {once} from './utils/decorators'
-import {autobind, mixin} from 'core-decorators'
+import {once, mixin, autobind} from './utils/decorators'
 
 @mixin(EventEmitter.prototype)
 export default class Container {

@@ -2,7 +2,7 @@ import assert from 'assert'
 import domready from 'domready'
 import {forOwn, isUndefined, isFunction} from 'lodash'
 import randomId from './utils/randomId'
-import {autobind, mixin} from 'core-decorators'
+import {mixin, autobind} from './utils/decorators'
 import {mutationEvents} from './utils/DOM'
 import EventEmitter from './utils/EventEmitter'
 import Container from './Container'
@@ -122,6 +122,8 @@ class Mediator {
       params = containerElement
       containerElement = null
     }
+    if (typeof containerElement === 'string')
+      containerElement = document.querySelector(containerElement)
     const {config, properties} = this.widgets[name]
     const id = this.provideWidgetId()
     const widget = this.widgetInstances[id] = new Widget(this, id, config, properties, params)

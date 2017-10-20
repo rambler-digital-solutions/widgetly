@@ -1,12 +1,28 @@
 import ContentElement from '../layouts/ContentElement'
 import {Provider} from 'magic-transport'
-import iframeResizer from 'iframe-resizer/js/iframeResizer'
 import {parse as parseUrl} from 'url'
-import {autobind, mixin} from 'core-decorators'
 import {removeFromDOM, onRemoveFromDOM, createViewportManager} from '../utils/DOM'
-import {once} from '../utils/decorators'
+import {once, mixin, autobind} from '../utils/decorators'
 import {getVisibleArea} from '../utils/DOM/viewport'
 import EventEmitter from '../utils/EventEmitter'
+
+class Resizer {
+
+  constructor(container, transport) {
+    this.container = container
+    this.transport = transport
+  }
+
+  async resize() {
+    const size = await this.transport.consumer.getSize()
+    this.setSize(size)
+  }
+
+  setSize({height}) {
+    this.container.style.height = height + 'px'
+  }
+
+}
 
 @mixin(EventEmitter.prototype)
 export default class IFrameProvider extends ContentElement {
@@ -49,28 +65,17 @@ export default class IFrameProvider extends ContentElement {
   }
 
   async initialize() {
-    this.transport = new Provider(this.id, this.consumerOrigin, this.widget.externalizeAsProvider())
+    this.transport = new Provider(this.id, this.consumerOrigin, {
+      ...this.widget.externalizeAsProvider(),
+      resize: () => this.resizer.resize(),
+      setSize: (size) => this.resizer.setSize(size)
+    })
+    this.resizer = new Resizer(this.element, this.transport)
     this.provider = this.transport.provider
     this.consumer = await new Promise(resolve => this.transport.once('ready', resolve))
-    let resizedResolve
-    let initResolve
-    const resizedPromise = new Promise(resolve => { resizedResolve = resolve })
-    const initPromise = new Promise(resolve => { initResolve = resolve })
-    this.resizer = iframeResizer({
-      targetOrigin: this.consumerOrigin,
-      resizedCallback: (() => {
-        resizedResolve()
-        // Иногда initCallback может не вызваться почему то
-        initResolve()
-      }),
-      initCallback: initResolve
-    }, this.element)[0].iFrameResizer
-
-    await Promise.all([
-      resizedPromise,
-      initPromise,
-      this.consumer.initialize()
-    ])
+    await this.consumer.initialize()
+    await this.resizer.resize()
+    this.consumer.watchSize()
 
     return this.consumer
   }
