@@ -1,4 +1,6 @@
-import {forOwn, isUndefined, isFunction} from 'lodash'
+import forOwn from 'lodash/forOwn'
+import isUndefined from 'lodash/isUndefined'
+import isFunction from 'lodash/isFunction'
 import IFrame from './iframe/Provider'
 import EventEmitter from './utils/EventEmitter'
 import {scrollByElementTo} from './utils/DOM'
