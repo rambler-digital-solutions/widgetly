@@ -41,7 +41,7 @@ export default class IFrameProvider extends ContentElement {
     EventEmitter.call(this)
     // Создаем элемент iframe
     this.id = id
-    this.url = url + '#widgetId=' + this.id
+    this.url = url + (url.indexOf('#') === -1 ? '#' : '&') + 'widgetId=' + this.id
     this.widget = widget
 
     this._destroyed = false
