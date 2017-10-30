@@ -3,7 +3,15 @@ import {parse as parseUrl} from 'url'
 import forOwn from 'lodash/forOwn'
 import isUndefined from 'lodash/isUndefined'
 import isFunction from 'lodash/isFunction'
-import {mutationEvents} from '../utils/DOM'
+import isEqual from 'lodash/isEqual'
+import {mutationEvents, setMutationParams} from '../utils/DOM'
+
+setMutationParams({
+  attributes: true,
+  childList: true,
+  subtree: true,
+  characterData: true
+})
 
 class IFrameResizer {
 
@@ -13,17 +21,26 @@ class IFrameResizer {
 
   getSize() {
     return {
-      width: document.body.offsetWidth,
-      height: document.body.offsetHeight
+      width: document.body.clientWidth,
+      height: document.body.clientHeight
     }
   }
 
   resize() {
-    this.transport.provider.setSize(this.getSize())
+    const newSize = this.getSize()
+    if (!isEqual(newSize, this.currentSize)) {
+      this.transport.provider.setSize(newSize)
+      this.currentSize = newSize
+    }
   }
 
   watchSize() {
-    mutationEvents.on('mutation', ::this.resize)
+    const resize = ::this.resize
+    const events = ['focusin', 'focusout', 'click', 'touchstart']
+    mutationEvents.on('mutation', resize)
+    events.forEach((event) => {
+      window.addEventListener(event, resize, false)
+    })
   }
 
 }

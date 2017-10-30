@@ -8,6 +8,9 @@ import debounce from 'lodash/debounce'
 import EventEmitter from 'events'
 import {scrollToTop, getScroll} from './scroll'
 
+let mutationEventsParams = {childList: true, subtree: true}
+let observing = false
+
 const MutationObserver =
   window.MutationObserver ||
   window.WebKitMutationObserver ||
@@ -27,6 +30,28 @@ export const mutationEvents = new EventEmitter
 export const mutationObserver = new MutationObserver((e) => {
   mutationEvents.emit('mutation', e)
 })
+
+/**
+ * Выставляем параметры для mutationObserver
+ * @param {Object} params - Параметры для mutation-observerf
+ */
+export function setMutationParams(params) {
+  mutationEventsParams = params
+  if (observing)
+    initObserve()
+}
+
+/**
+ * Начать смотреть за DOM
+ */
+export function initObserve() {
+  if (observing)
+    mutationObserver.disconnect()
+  const observedNode = document.body || document.documentElement
+  mutationObserver.observe(observedNode, mutationEventsParams)
+  observing = true
+}
+
 
 /**
  * Следим за scroll окно
@@ -207,8 +232,5 @@ function findScrollableParent(element, noCheckScrollHeight) {
   return findScrollableParent(element, noCheckScrollHeight)
 }
 
-domready(() => {
-  const observedNode = document.body || document.documentElement
-  mutationObserver.observe(observedNode, {childList: true, subtree: true})
-})
+domready(initObserve)
 
