@@ -4,6 +4,7 @@ import forOwn from 'lodash/forOwn'
 import isUndefined from 'lodash/isUndefined'
 import isFunction from 'lodash/isFunction'
 import isEqual from 'lodash/isEqual'
+import throttle from 'lodash/throttle'
 import {mutationEvents, setMutationParams} from '../utils/DOM'
 
 setMutationParams({
@@ -17,6 +18,10 @@ class IFrameResizer {
 
   constructor(transport) {
     this.transport = transport
+    this.resize = throttle(::this.resize, 60, {
+      leading: true,
+      trailing: true
+    })
   }
 
   getSize() {
@@ -35,12 +40,7 @@ class IFrameResizer {
   }
 
   watchSize() {
-    const resize = ::this.resize
-    const events = ['focusin', 'focusout', 'click', 'touchstart']
-    mutationEvents.on('mutation', resize)
-    events.forEach((event) => {
-      window.addEventListener(event, resize, false)
-    })
+    mutationEvents.on('mutation', this.resize)
   }
 
 }
