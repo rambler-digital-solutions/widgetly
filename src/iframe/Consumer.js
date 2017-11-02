@@ -6,6 +6,7 @@ import isFunction from 'lodash/isFunction'
 import isEqual from 'lodash/isEqual'
 import throttle from 'lodash/throttle'
 import {mutationEvents, setMutationParams} from '../utils/DOM'
+import EventEmitter from '../utils/EventEmitter'
 
 setMutationParams({
   attributes: true,
@@ -17,6 +18,7 @@ setMutationParams({
 class IFrameResizer {
 
   constructor(transport) {
+    this.events = new EventEmitter
     this.transport = transport
     this.resize = throttle(::this.resize, 60, {
       leading: true,
@@ -36,6 +38,7 @@ class IFrameResizer {
     if (!isEqual(newSize, this.currentSize)) {
       this.transport.provider.setSize(newSize)
       this.currentSize = newSize
+      this.events.emit('resize', this.currentSize)
     }
   }
 
