@@ -59,6 +59,7 @@ export default class IFrameProvider extends ContentElement {
     this.element.style.display = 'block !important'
     this.element.setAttribute('frameborder', 'no')
     this.element.setAttribute('width', '100%')
+    this.element.setAttribute('scrolling', 'no')
     this.element.name = this.id
     this.element.id = this.id
     this.element.src = this.url
