@@ -169,7 +169,7 @@ export default class Widget {
    */
   _subscribeVisibleAreaChange(offset, callback) {
     if (this.iframe)
-      this.iframe.subscribeVisibleAreaChange(offset, callback)
+      return this.iframe.subscribeVisibleAreaChange(offset, callback)
   }
 
   _subscribeEvents() {
