@@ -84,8 +84,8 @@ export default class IFrameProvider extends ContentElement {
 
   /**
    * Подписка на изменение видимой области iframe
-   * @param {func} callback
-   * @return unsubscribeVisibleAreaChange - callback отписки от события
+   * @param {Function}  callback
+   * @return {Function} Функция отписки от события
    */
   subscribeVisibleAreaChange(callback) {
     this._subscribeViewportChange()
