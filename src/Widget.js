@@ -158,9 +158,11 @@ export default class Widget {
    * @param {Number} top - координата относительно верхнего левого угла айфрейма, к которой нужно подскроллить
    * @param {Number} duration = 200 - время анимации скролла
    */
-  async _iFrameScrollTo(top, duration) {
-    await scrollByElementTo(this.iframe.getElement(), top, duration)
-    this.iframe.updateViewport()
+  _iFrameScrollTo(top, duration) {
+    return scrollByElementTo(this.iframe.getElement(), top, duration)
+      .then(() => {
+        this.iframe.updateViewport()
+      })
   }
 
   /**

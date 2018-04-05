@@ -182,10 +182,10 @@ export function toggleClass(element, ...args) {
         removeClass(element, k)
     })
   else
-    if (add)
-      addClass(element, ...classNames)
-    else
-      removeClass(element, ...classNames)
+  if (add)
+    addClass(element, ...classNames)
+  else
+    removeClass(element, ...classNames)
 }
 
 /**
