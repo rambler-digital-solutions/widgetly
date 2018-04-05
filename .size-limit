@@ -1,7 +1,7 @@
 [
   {
     "name": "The size of the whole library",
-    "limit": "5 KB",
+    "limit": "15 KB",
     "path": "lib/index.js"
   }
 ]

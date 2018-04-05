@@ -25,8 +25,10 @@
   "license": "ISC",
   "dependencies": {
     "classnames": "^2.2.5",
+    "deep-equal": "^1.0.1",
     "domready": "^1.0.8",
-    "lodash": "^4.17.4",
+    "lodash.debounce": "^4.0.8",
+    "lodash.throttle": "^4.1.1",
     "magic-transport": "^2.1.0"
   },
   "devDependencies": {

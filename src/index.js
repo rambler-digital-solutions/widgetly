@@ -1,8 +1,4 @@
-import assert from 'assert'
 import domready from 'domready'
-import forOwn from 'lodash/forOwn'
-import isUndefined from 'lodash/isUndefined'
-import isFunction from 'lodash/isFunction'
 import randomId from './utils/randomId'
 import {mixin, autobind} from './utils/decorators'
 import {mutationEvents} from './utils/DOM'
@@ -69,11 +65,13 @@ class Mediator {
     this.config = options.config || {}
     this.id = Mediator.provideId()
     this.properties = {}
-    forOwn(properties, (value, key) => {
-      if (isUndefined(this[key]))
-        this[key] = value
-      this.properties[key] = isFunction(value) ? value.bind(this) : value
-    })
+    for (const key in properties)
+      if (properties.hasOwnProperty(key)) {
+        const value = properties[key]
+        if (this[key] === undefined)
+          this[key] = value
+        this.properties[key] = typeof value === 'function' ? value.bind(this) : value
+      }
     if (this.options.initialize)
       this.options.initialize.call(this)
     mutationEvents.on('mutation', this.initializeDOMElements)
@@ -119,7 +117,8 @@ class Mediator {
    * @return {Promise}
    */
   buildWidget(name, containerElement, params) {
-    assert(this.widgets[name], `Widget '${name}' does not exists`)
+    if (!this.widgets[name])
+      throw new Error(`Widget '${name}' does not exists`)
     if (!params && typeof containerElement !== 'string' && !(containerElement instanceof HTMLElement)) {
       params = containerElement
       containerElement = null
@@ -140,7 +139,10 @@ class Mediator {
 
   @autobind
   updateViewport() {
-    forOwn(this.widgetInstances, (widget) => widget.updateViewport())
+    const widgets = this.widgetInstances
+    for (const key in widgets)
+      if (widgets.hasOwnProperty(key))
+        widgets[key].updateViewport()
   }
 
   /**
@@ -155,11 +157,12 @@ class Mediator {
       if (this.prefix) {
         const prefixLen = this.prefix.length
         // убираем префикс
-        forOwn(dataset, (value, key) => {
-          const newKey = key.slice(prefixLen, prefixLen + 1).toLowerCase() + key.slice(prefixLen + 1)
-          dataset[newKey] = value
-          delete dataset[key]
-        })
+        for (const key in dataset)
+          if (dataset.hasOwnProperty(key)) {
+            const newKey = key.slice(prefixLen, prefixLen + 1).toLowerCase() + key.slice(prefixLen + 1)
+            dataset[newKey] = dataset[key]
+            delete dataset[key]
+          }
       }
       const {widget, ...params} = dataset
       this.buildWidget(widget, element, params)
