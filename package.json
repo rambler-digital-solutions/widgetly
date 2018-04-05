@@ -3,10 +3,14 @@
   "version": "5.1.1",
   "description": "Library helps you to create iframe-widgets",
   "main": "lib/index.js",
+  "files": [
+    "src",
+    "lib"
+  ],
   "scripts": {
     "build_babel": "./node_modules/babel-cli/bin/babel.js src --out-dir lib",
     "build": "rm -rf lib; cp -r src lib; npm run build_babel",
-    "precommit": "npm run build && npm run eslint",
+    "precommit": "npm run eslint",
     "prepublish": "npm run build && npm run eslint",
     "eslint": "./node_modules/eslint/bin/eslint.js --fix src/** *.js",
     "test": "echo \"Error: no test specified\" && exit 1"
