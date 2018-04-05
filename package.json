@@ -8,12 +8,14 @@
     "lib"
   ],
   "scripts": {
-    "build_babel": "./node_modules/babel-cli/bin/babel.js src --out-dir lib",
-    "build": "rm -rf lib; cp -r src lib; npm run build_babel",
-    "precommit": "npm run eslint",
-    "prepublish": "npm run build && npm run eslint",
-    "eslint": "./node_modules/eslint/bin/eslint.js --fix src/** *.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prebuild": "rm -rf lib",
+    "build": "babel src --out-dir lib",
+    "eslint": "eslint --fix src/**",
+    "size": "npm run build && size-limit",
+    "precommit": "lint-staged",
+    "prepublish": "npm run build",
+    "postpublish": "rm -rf lib && git push --follow-tags"
   },
   "repository": {
     "type": "git",
@@ -42,6 +44,14 @@
     "eslint": "^3.13.1",
     "eslint-plugin-babel": "^4.0.0",
     "eslint-plugin-import": "^2.2.0",
-    "husky": "^0.12.0"
+    "husky": "^0.12.0",
+    "lint-staged": "^7.0.4",
+    "size-limit": "^0.17.0"
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint --fix",
+      "git add"
+    ]
   }
 }
