@@ -3,8 +3,7 @@
  */
 import classnames from 'classnames'
 import domready from 'domready'
-import forOwn from 'lodash/forOwn'
-import debounce from 'lodash/debounce'
+import debounce from 'lodash.debounce'
 import EventEmitter from 'events'
 import {scrollToTop, getScroll} from './scroll'
 
@@ -174,18 +173,20 @@ export function removeClass(element, ...classNames) {
  */
 export function toggleClass(element, ...args) {
   const [add, ...classNames] = args.reverse()
-  if (typeof add !== 'boolean')
-    forOwn(args[0], (v, k) => {
-      if (v)
-        addClass(element, k)
-      else
-        removeClass(element, k)
-    })
-  else
+  if (typeof add !== 'boolean') {
+    const classes = args[0]
+    for (const key in classes)
+      if (classes.hasOwnProperty(key))
+        if (classes[key])
+          addClass(element, key)
+        else
+          removeClass(element, key)
+  } else {
     if (add)
       addClass(element, ...classNames)
     else
       removeClass(element, ...classNames)
+  }
 }
 
 /**

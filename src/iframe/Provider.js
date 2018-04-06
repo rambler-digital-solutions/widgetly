@@ -13,9 +13,11 @@ class Resizer {
     this.transport = transport
   }
 
-  async resize() {
-    const size = await this.transport.consumer.getSize()
-    this.setSize(size)
+  resize() {
+    return this.transport.consumer.getSize()
+      .then(size => {
+        this.setSize(size)
+      })
   }
 
   setSize({height}) {
@@ -66,7 +68,7 @@ export default class IFrameProvider extends ContentElement {
     onRemoveFromDOM(this.element, this.destroy)
   }
 
-  async initialize() {
+  initialize() {
     this.transport = new Provider(this.id, this.consumerOrigin, {
       ...this.widget.externalizeAsProvider(),
       resize: () => this.resizer.resize(),
@@ -74,12 +76,16 @@ export default class IFrameProvider extends ContentElement {
     })
     this.resizer = new Resizer(this.element, this.transport)
     this.provider = this.transport.provider
-    this.consumer = await new Promise(resolve => this.transport.once('ready', resolve))
-    await this.consumer.initialize()
-    await this.resizer.resize()
-    this.consumer.watchSize()
-
-    return this.consumer
+    return new Promise(resolve => this.transport.once('ready', resolve))
+      .then(consumer => {
+        this.consumer = consumer
+      })
+      .then(() => this.consumer.initialize())
+      .then(() => this.resizer.resize())
+      .then(() => {
+        this.consumer.watchSize()
+        return this.consumer
+      })
   }
 
   /**

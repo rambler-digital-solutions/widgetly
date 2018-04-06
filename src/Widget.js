@@ -1,6 +1,3 @@
-import forOwn from 'lodash/forOwn'
-import isUndefined from 'lodash/isUndefined'
-import isFunction from 'lodash/isFunction'
 import IFrame from './iframe/Provider'
 import EventEmitter from './utils/EventEmitter'
 import {scrollByElementTo} from './utils/DOM'
@@ -73,11 +70,13 @@ export default class Widget {
     if (config.externalize)
       this.externalize = config.externalize.bind(this)
 
-    forOwn(properties, (value, key) => {
-      this.properties[key] = isFunction(value) ? value.bind(this) : value
-      if (isUndefined(this[key]))
-        this[key] = this.properties[key]
-    })
+    for (const key in properties)
+      if (properties.hasOwnProperty(key)) {
+        const value = properties[key]
+        this.properties[key] = typeof value === 'function' ? value.bind(this) : value
+        if (this[key] === undefined)
+          this[key] = this.properties[key]
+      }
   }
 
   initialize() {
@@ -158,9 +157,11 @@ export default class Widget {
    * @param {Number} top - координата относительно верхнего левого угла айфрейма, к которой нужно подскроллить
    * @param {Number} duration = 200 - время анимации скролла
    */
-  async _iFrameScrollTo(top, duration) {
-    await scrollByElementTo(this.iframe.getElement(), top, duration)
-    this.iframe.updateViewport()
+  _iFrameScrollTo(top, duration) {
+    return scrollByElementTo(this.iframe.getElement(), top, duration)
+      .then(() => {
+        this.iframe.updateViewport()
+      })
   }
 
   /**

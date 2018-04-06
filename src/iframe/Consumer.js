@@ -1,10 +1,7 @@
 import {Consumer} from 'magic-transport'
 import {parse as parseUrl} from 'url'
-import forOwn from 'lodash/forOwn'
-import isUndefined from 'lodash/isUndefined'
-import isFunction from 'lodash/isFunction'
-import isEqual from 'lodash/isEqual'
-import throttle from 'lodash/throttle'
+import equal from 'deep-equal'
+import throttle from 'lodash.throttle'
 import {mutationEvents, setMutationParams} from '../utils/DOM'
 import EventEmitter from '../utils/EventEmitter'
 
@@ -35,7 +32,7 @@ class IFrameResizer {
 
   resize() {
     const newSize = this.getSize()
-    if (!isEqual(newSize, this.currentSize)) {
+    if (!equal(newSize, this.currentSize)) {
       this.transport.provider.setSize(newSize)
       this.currentSize = newSize
       this.events.emit('resize', this.currentSize)
@@ -67,11 +64,13 @@ export default class IFrameConsumer {
     this.properties = {}
     this.provider = null
 
-    forOwn(properties, (value, key) => {
-      this.properties[key] = isFunction(value) ? value.bind(this) : value
-      if (isUndefined(this[key]))
-        this[key] = this.properties[key]
-    })
+    for (const key in properties)
+      if (properties.hasOwnProperty(key)) {
+        const value = properties[key]
+        this.properties[key] = typeof value === 'function' ? value.bind(this) : value
+        if (this[key] === undefined)
+          this[key] = this.properties[key]
+      }
 
     this.transport = new Consumer(this.id, '*', this.externalizeAsConsumer())
     this.resizer = new IFrameResizer(this.transport)
