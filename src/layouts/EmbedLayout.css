@@ -1,11 +1,10 @@
 .EmbedLayout {
-  &.is-loading .Content {
-    display: none;
-  }
   overflow: hidden;
   clear: both;
-  &.is-hidden {
-    display: none;
+  &.is-hidden,
+  &.is-loading .Content {
+    height: 0;
+    visibility: hidden;
   }
   * {
     box-sizing: border-box;
