@@ -29,7 +29,7 @@
     "domready": "^1.0.8",
     "lodash.debounce": "^4.0.8",
     "lodash.throttle": "^4.1.1",
-    "magic-transport": "^2.1.1"
+    "magic-transport": "^2.1.2"
   },
   "devDependencies": {
     "babel-cli": "^6.18.0",
