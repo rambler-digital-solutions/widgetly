@@ -11,7 +11,6 @@ import Widget from './Widget'
  */
 @mixin(EventEmitter.prototype)
 class Mediator {
-
   static provideId() {
     return randomId()
   }
@@ -68,12 +67,11 @@ class Mediator {
     for (const key in properties)
       if (properties.hasOwnProperty(key)) {
         const value = properties[key]
-        if (this[key] === undefined)
-          this[key] = value
-        this.properties[key] = typeof value === 'function' ? value.bind(this) : value
+        if (this[key] === undefined) this[key] = value
+        this.properties[key] =
+          typeof value === 'function' ? value.bind(this) : value
       }
-    if (this.options.initialize)
-      this.options.initialize.call(this)
+    if (this.options.initialize) this.options.initialize.call(this)
     mutationEvents.on('mutation', this.initializeDOMElements)
     domready(this.initializeDOMElements)
   }
@@ -117,9 +115,12 @@ class Mediator {
    * @return {Promise}
    */
   buildWidget(name, containerElement, params) {
-    if (!this.widgets[name])
-      throw new Error(`Widget '${name}' does not exists`)
-    if (!params && typeof containerElement !== 'string' && !(containerElement instanceof HTMLElement)) {
+    if (!this.widgets[name]) throw new Error(`Widget '${name}' does not exists`)
+    if (
+      !params &&
+      typeof containerElement !== 'string' &&
+      !(containerElement instanceof HTMLElement)
+    ) {
       params = containerElement
       containerElement = null
     }
@@ -127,13 +128,16 @@ class Mediator {
       containerElement = document.querySelector(containerElement)
     const {config, properties} = this.widgets[name]
     const id = this.provideWidgetId()
-    const widget = this.widgetInstances[id] = new Widget(this, id, config, properties, params)
-    widget.once('destroy', () =>
-      delete this.widgetInstances[id]
-    )
+    const widget = (this.widgetInstances[id] = new Widget(
+      this,
+      id,
+      config,
+      properties,
+      params
+    ))
+    widget.once('destroy', () => delete this.widgetInstances[id])
     widget.container = containerElement ? new Container(containerElement) : null
-    if (containerElement)
-      containerElement.rcWidget = widget
+    if (containerElement) containerElement.rcWidget = widget
     return widget.initialize()
   }
 
@@ -141,8 +145,7 @@ class Mediator {
   updateViewport() {
     const widgets = this.widgetInstances
     for (const key in widgets)
-      if (widgets.hasOwnProperty(key))
-        widgets[key].updateViewport()
+      if (widgets.hasOwnProperty(key)) widgets[key].updateViewport()
   }
 
   /**
@@ -151,22 +154,28 @@ class Mediator {
   @autobind
   initializeDOMElements() {
     const prefix = this.prefix ? `${this.prefix}-` : ''
-    const elements = [].slice.call(document.querySelectorAll(`[data-${prefix}widget]:not([data-${prefix}inited])`))
-    elements.forEach((element) => {
+    const elements = [].slice.call(
+      document.querySelectorAll(
+        `[data-${prefix}widget]:not([data-${prefix}inited])`
+      )
+    )
+    elements.forEach(element => {
       const {...dataset} = element.dataset
       if (this.prefix) {
         const prefixLen = this.prefix.length
         // убираем префикс
         for (const key in dataset)
           if (dataset.hasOwnProperty(key)) {
-            const newKey = key.slice(prefixLen, prefixLen + 1).toLowerCase() + key.slice(prefixLen + 1)
+            const newKey =
+              key.slice(prefixLen, prefixLen + 1).toLowerCase() +
+              key.slice(prefixLen + 1)
             dataset[newKey] = dataset[key]
             delete dataset[key]
           }
       }
       const {widget, ...params} = dataset
-      this.buildWidget(widget, element, params)
       element.setAttribute(`data-${prefix}inited`, true)
+      this.buildWidget(widget, element, params)
     })
   }
 
@@ -185,13 +194,13 @@ class Mediator {
       buildWidget: ::this.buildWidget,
       initializeDOMElements: ::this.initializeDOMElements,
       ...this.externalizeEmitter(),
-      ...(externalizeAsProvider ? externalizeAsProvider.call(this) : this.properties)
+      ...(externalizeAsProvider
+        ? externalizeAsProvider.call(this)
+        : this.properties)
     }
   }
-
 }
 
-
-export default function (...args) {
+export default function(...args) {
   return new Mediator(...args)
 }
