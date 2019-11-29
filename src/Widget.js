@@ -11,7 +11,6 @@ import {once, mixin, autobind} from './utils/decorators'
  */
 @mixin(EventEmitter.prototype)
 export default class Widget {
-
   /**
    * Параметры виджета
    * @type {Object}
@@ -67,15 +66,14 @@ export default class Widget {
     this.params = params
     this._destroyed = false
 
-    if (config.externalize)
-      this.externalize = config.externalize.bind(this)
+    if (config.externalize) this.externalize = config.externalize.bind(this)
 
     for (const key in properties)
       if (properties.hasOwnProperty(key)) {
         const value = properties[key]
-        this.properties[key] = typeof value === 'function' ? value.bind(this) : value
-        if (this[key] === undefined)
-          this[key] = this.properties[key]
+        this.properties[key] =
+          typeof value === 'function' ? value.bind(this) : value
+        if (this[key] === undefined) this[key] = this.properties[key]
       }
   }
 
@@ -88,22 +86,17 @@ export default class Widget {
   }
 
   updateViewport() {
-    if (this.container)
-      this.container.updateViewport()
-    if (this.iframe)
-      this.iframe.updateViewport()
+    if (this.container) this.container.updateViewport()
+    if (this.iframe) this.iframe.updateViewport()
   }
 
   @autobind
   @once
   destroy() {
     this._unsubscribeEvents()
-    if (this.layout)
-      this.layout.destroy()
-    if (this.iframe)
-      this.iframe.destroy()
-    if (this.config.destroy)
-      this.config.destroy.call(this)
+    if (this.layout) this.layout.destroy()
+    if (this.iframe) this.iframe.destroy()
+    if (this.config.destroy) this.config.destroy.call(this)
     this.emit('destroy')
     this.removeAllListeners()
   }
@@ -144,12 +137,16 @@ export default class Widget {
       scrollTo: ::this._iFrameScrollTo,
       resize: ::this.iframe.resize,
       ...this.externalizeEmitter({withEmit: true}),
-      ...(externalizeAsProvider ? externalizeAsProvider.call(this) : this.properties)
+      ...(externalizeAsProvider
+        ? externalizeAsProvider.call(this)
+        : this.properties)
     }
   }
 
   whenContainerInViewport(...args) {
-    return !this.container ? Promise.resolve() : this.container.whenEnterViewportFromTop(...args)
+    return !this.container
+      ? Promise.resolve()
+      : this.container.whenEnterViewportFromTop(...args)
   }
 
   /**
@@ -158,10 +155,11 @@ export default class Widget {
    * @param {Number} duration = 200 - время анимации скролла
    */
   _iFrameScrollTo(top, duration) {
-    return scrollByElementTo(this.iframe.getElement(), top, duration)
-      .then(() => {
+    return scrollByElementTo(this.iframe.getElement(), top, duration).then(
+      () => {
         this.iframe.updateViewport()
-      })
+      }
+    )
   }
 
   /**
@@ -174,25 +172,18 @@ export default class Widget {
   }
 
   _subscribeEvents() {
-    if (this.iframe)
-      this.iframe.on('destroy', this.destroy)
-    if (this.layout)
-      this.iframe.on('destroy', this.destroy)
-    if (this.container)
-      this.container.on('destroy', this.destroy)
+    if (this.iframe) this.iframe.on('destroy', this.destroy)
+    if (this.layout) this.layout.on('destroy', this.destroy)
+    if (this.container) this.container.on('destroy', this.destroy)
   }
 
   _unsubscribeEvents() {
-    if (this.iframe)
-      this.iframe.removeListener('destroy', this.destroy)
-    if (this.layout)
-      this.layout.removeListener('destroy', this.destroy)
-    if (this.container)
-      this.container.removeListener('destroy', this.destroy)
+    if (this.iframe) this.iframe.removeListener('destroy', this.destroy)
+    if (this.layout) this.layout.removeListener('destroy', this.destroy)
+    if (this.container) this.container.removeListener('destroy', this.destroy)
   }
 
   _getIFrameVisibleArea() {
     return this.iframe.getVisibleArea()
   }
-
 }
