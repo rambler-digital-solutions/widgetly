@@ -160,6 +160,7 @@ export default class Mediator {
       )
     )
     elements.forEach(element => {
+      if (element.hasAttribute(`data-${prefix}inited`)) return
       const {...dataset} = element.dataset
       if (this.prefix) {
         const prefixLen = this.prefix.length
