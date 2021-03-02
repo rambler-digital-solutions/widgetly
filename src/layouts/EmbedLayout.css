@@ -6,7 +6,7 @@
     height: 0;
     visibility: hidden;
   }
-  * {
+  & * {
     box-sizing: border-box;
   }
 }
@@ -20,7 +20,7 @@
 
 .Content {
   overflow: hidden;
-  iframe {
+  & iframe {
     /*
     http://stackoverflow.com/questions/23083462/how-to-get-an-iframe-to-be-responsive-in-ios-safari
     */
