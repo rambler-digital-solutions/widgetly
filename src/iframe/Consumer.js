@@ -1,6 +1,5 @@
 import {Consumer} from 'magic-transport'
 import {parse as parseUrl} from 'url'
-import equal from 'deep-equal'
 import throttle from 'lodash.throttle'
 import {mutationEvents, setMutationParams} from '../utils/DOM'
 import EventEmitter from '../utils/EventEmitter'
@@ -13,9 +12,8 @@ setMutationParams({
 })
 
 class IFrameResizer {
-
   constructor(transport) {
-    this.events = new EventEmitter
+    this.events = new EventEmitter()
     this.transport = transport
     this.resize = throttle(::this.resize, 60, {
       leading: true,
@@ -32,7 +30,10 @@ class IFrameResizer {
 
   resize() {
     const newSize = this.getSize()
-    if (!equal(newSize, this.currentSize)) {
+    const isSizeChanged =
+      newSize.width !== this.currentSize.width ||
+      newSize.height !== this.currentSize.height
+    if (isSizeChanged) {
       this.transport.provider.setSize(newSize)
       this.currentSize = newSize
       this.events.emit('resize', this.currentSize)
@@ -42,11 +43,9 @@ class IFrameResizer {
   watchSize() {
     mutationEvents.on('mutation', this.resize)
   }
-
 }
 
 export default class IFrameConsumer {
-
   /**
    * Этот файл должен вызываться из айфрейма
    * @param {Object} config Конфиг
@@ -67,9 +66,9 @@ export default class IFrameConsumer {
     for (const key in properties)
       if (properties.hasOwnProperty(key)) {
         const value = properties[key]
-        this.properties[key] = typeof value === 'function' ? value.bind(this) : value
-        if (this[key] === undefined)
-          this[key] = this.properties[key]
+        this.properties[key] =
+          typeof value === 'function' ? value.bind(this) : value
+        if (this[key] === undefined) this[key] = this.properties[key]
       }
 
     this.transport = new Consumer(this.id, '*', this.externalizeAsConsumer())
@@ -89,13 +88,15 @@ export default class IFrameConsumer {
 
   externalizeAsConsumer() {
     return {
-      ...(this.config.externalizeAsConsumer ? this.config.externalizeAsConsumer.call(this) : this.properties),
+      ...(this.config.externalizeAsConsumer
+        ? this.config.externalizeAsConsumer.call(this)
+        : this.properties),
       // Эту функцию должен вызывать provider для инициализации
       initialize: () => this.config.initialize.call(this, this.provider),
       externalizedProps: this.externalize(),
       getSize: () => this.resizer.getSize(),
       watchSize: () => this.resizer.watchSize(),
-      resize: (params) => {
+      resize: params => {
         this.resizer.resize(params)
       }
     }
@@ -106,11 +107,9 @@ export default class IFrameConsumer {
    * @return {Object}
    */
   externalize() {
-    if (this.config.externalize)
-      return this.config.externalize.call(this)
+    if (this.config.externalize) return this.config.externalize.call(this)
     return this.properties
   }
-
 }
 
 /**

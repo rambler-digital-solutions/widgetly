@@ -25,7 +25,6 @@
   "author": "Sergey Pereskokov s.pereskokov@rambler-co.ru",
   "license": "ISC",
   "dependencies": {
-    "deep-equal": "^1.0.1",
     "domready": "^1.0.8",
     "lodash.debounce": "^4.0.8",
     "lodash.throttle": "^4.1.1",
