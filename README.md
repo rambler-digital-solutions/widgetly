@@ -49,7 +49,7 @@ mediator.defineWidget(config, properties)
 // ./widget.js
 import mediator from './mediator'
 // импортируем лэйаут встроенного виджета
-import EmbedLayout from 'widgetly/layouts/EmbedLayout'
+import {EmbedLayout} from 'widgetly'
 
 // декларируем виджет
 mediator.defineWidget({
@@ -94,7 +94,7 @@ mediator.defineWidget({
 // ./widget.js
 import mediator from './mediator'
 // импортируем лэйаут встроенного виджета
-import OverlayLayout from 'widgetly/layouts/OverlayLayout'
+import {OverlayLayout} from 'widgetly'
 
 // декларируем виджет
 mediator.defineWidget({
