@@ -1,5 +1,4 @@
 import {Consumer} from 'magic-transport'
-import {parse as parseUrl} from 'url'
 import throttle from 'lodash.throttle'
 import {mutationEvents, setMutationParams} from '../utils/DOM'
 import EventEmitter from '../utils/EventEmitter'
@@ -77,13 +76,13 @@ export default class IFrameConsumer {
     this.transport.once('ready', () => {
       this.provider = this.transport.provider
       this.parentUrl = this.provider.url
-      const {protocol, host} = parseUrl(this.parentUrl)
+      const {protocol, host} = new URL(this.parentUrl)
       this.parentOrigin = `${protocol}//${host}`
     })
   }
 
   parseId() {
-    return parseUrl('?' + window.location.hash.slice(1), true).query.widgetId
+    return new URLSearchParams(window.location.hash.slice(1)).get('widgetId')
   }
 
   externalizeAsConsumer() {

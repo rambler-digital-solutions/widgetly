@@ -1,34 +1,33 @@
 import ContentElement from '../layouts/ContentElement'
 import {Provider} from 'magic-transport'
-import {parse as parseUrl} from 'url'
-import {removeFromDOM, onRemoveFromDOM, createViewportManager} from '../utils/DOM'
+import {
+  removeFromDOM,
+  onRemoveFromDOM,
+  createViewportManager
+} from '../utils/DOM'
 import {once, mixin, autobind} from '../utils/decorators'
 import {getVisibleArea} from '../utils/DOM/viewport'
 import EventEmitter from '../utils/EventEmitter'
 
 class Resizer {
-
   constructor(container, transport) {
     this.container = container
     this.transport = transport
   }
 
   resize() {
-    return this.transport.consumer.getSize()
-      .then(size => {
-        this.setSize(size)
-      })
+    return this.transport.consumer.getSize().then(size => {
+      this.setSize(size)
+    })
   }
 
   setSize({height}) {
     this.container.style.height = height + 'px'
   }
-
 }
 
 @mixin(EventEmitter.prototype)
 export default class IFrameProvider extends ContentElement {
-
   /**
    * Обертка над iframe
    * @param {String} options.url - URL по которому нужно загрузить iframe
@@ -43,16 +42,15 @@ export default class IFrameProvider extends ContentElement {
     EventEmitter.call(this)
     // Создаем элемент iframe
     this.id = id
-    this.url = url + (url.indexOf('#') === -1 ? '#' : '&') + 'widgetId=' + this.id
+    this.url =
+      url + (url.indexOf('#') === -1 ? '#' : '&') + 'widgetId=' + this.id
     this.widget = widget
 
     this._destroyed = false
 
-    const {protocol, host} = parseUrl(url)
-    if (host)
-      this.consumerOrigin = `${protocol}//${host}`
-    else
-      this.consumerOrigin = location.origin
+    const {protocol, host} = new URL(url)
+    if (host) this.consumerOrigin = `${protocol}//${host}`
+    else this.consumerOrigin = location.origin
     this.createElement()
   }
 
@@ -72,7 +70,7 @@ export default class IFrameProvider extends ContentElement {
     this.transport = new Provider(this.id, this.consumerOrigin, {
       ...this.widget.externalizeAsProvider(),
       resize: () => this.resizer.resize(),
-      setSize: (size) => this.resizer.setSize(size)
+      setSize: size => this.resizer.setSize(size)
     })
     this.resizer = new Resizer(this.element, this.transport)
     this.provider = this.transport.provider
@@ -109,11 +107,13 @@ export default class IFrameProvider extends ContentElement {
     return getVisibleArea(this.element)
   }
 
-
   @once
   _subscribeViewportChange() {
     if (!this.viewportManager)
-      this.viewportManager = createViewportManager(this.element, this.updateViewport)
+      this.viewportManager = createViewportManager(
+        this.element,
+        this.updateViewport
+      )
   }
 
   /**
@@ -141,8 +141,6 @@ export default class IFrameProvider extends ContentElement {
     this.emit('destroy')
     this.transport.destroy()
     this.removeAllListeners()
-    if (this.viewportManager)
-      this.viewportManager.destroy()
+    if (this.viewportManager) this.viewportManager.destroy()
   }
-
 }
