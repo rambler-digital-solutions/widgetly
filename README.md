@@ -27,7 +27,7 @@ export default const mediator = widgetly({
 
 ## Декларация виджетов
 
-После декларации медиатора, можно начать декларировать виджеты. Виджет декларируется через фабрику, которая имеет следующий интерфейс (Поля, отмеченные `*` - обязательны):
+После декларации медиатора, можно начать декларировать виджеты. Виджет декларируется через фабрику, которая имеет следующий интерфейс (поля, отмеченные `*` - обязательны):
 
 ```js
 mediator.defineWidget(config, properties)
@@ -49,7 +49,7 @@ mediator.defineWidget(config, properties)
 // ./widget.js
 import mediator from './mediator'
 // импортируем лэйаут встроенного виджета
-import EmbedLayout from 'widgetly/layouts/EmbedLayout'
+import {EmbedLayout} from 'widgetly'
 
 // декларируем виджет
 mediator.defineWidget({
@@ -94,7 +94,7 @@ mediator.defineWidget({
 // ./widget.js
 import mediator from './mediator'
 // импортируем лэйаут встроенного виджета
-import OverlayLayout from 'widgetly/layouts/OverlayLayout'
+import {OverlayLayout} from 'widgetly'
 
 // декларируем виджет
 mediator.defineWidget({
@@ -147,7 +147,96 @@ mediator.defineWidget({
 | `events` | EventEmitter лэйаута. Должен кидать следующие события: `destroy` |
 | `element` | Рутовый элемент лэйаута |
 
-## Виджет 
+## IFrame
+
+Внутри айфрейма нужно обернуть инициализацию вашего виджета:
+
+```js
+registerIFrame(config, properties)
+```
+
+| Название параметра | Тип | Описание |
+|---|---|---|
+| `config` | `Object*` | Конфиг |
+| `config.initialize` | `Function*` | Функция инициализации виджета. Должна отрисовывать приложение и возвращать `Promise` |
+| `config.externalizeAsConsumer` | `Function` | Этот метод должен возвращать фасад с методами, которые будут доступны виджету |
+| `config.externalize` | `Function` | Этот метод должен возвращать фасад с методами, которые видны снаружи виджета |
+| `properties` | `Object` | Дополнительные свойства |
+
+### Пример инициализации
+
+```js
+// ./app.js
+import React, {useEffect} from 'react'
+
+const App = ({transport, onReady}) => {
+  useEffect(() => {
+    onReady()
+  }, [onReady])
+
+  return (
+    <TransportContext.Provider value={transport}>
+      <main>
+        ...
+      </main>
+    </TransportContext.Provider>
+  )
+}
+```
+
+```js
+// ./iframe.js
+import React from 'react'
+import {render} from 'react-dom'
+import {registerIFrame} from 'widgetly'
+import App from './app'
+
+const container = document.getElementById('my_app')
+
+registerIFrame({
+  initialize() {
+    return new Promise(resolve => {
+      const app = (
+        <App 
+          transport={this} 
+          onReady={resolve} 
+        />
+      )
+      render(app, container)
+    })
+  }
+})
+```
+
+## Использование виджетов
+
+Медиатор может создавать виджеты автоматически в контейнеры с соответствующими data атрибутами. Для получения полного контроля над виджета, его можно создавать через фабрику, которая имеет следующий интерфейс (поля, отмеченные `*` - обязательны):
+
+```js
+mediator.buildWidget(name, containerElement, params)
+```
+
+| Название параметра | Тип | Описание |
+|---|---|---|
+| `name` | `String*` | Название виджета |
+| `containerElement` | `HTMLElement|String*` | Элемент/селектор, в которой будет вставлен виджет |
+| `params` | `Object*` | Параметры инициализации виджета |
+
+### Пример создания виджета
+
+```js
+// ./app.js
+import mediator from './mediator'
+
+const container = document.getElementById('my_comments');
+
+mediator.buildWidget('EmbedComments', container, {
+  appId: APP_ID,
+  pageUrl: window.location.pathname
+}).then(widget => {
+  // В этот момент можно пользоваться методами инстанции виджета
+});
+```
 
 ## Лицензия
 
