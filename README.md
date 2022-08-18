@@ -10,7 +10,7 @@ Widgetly помогает создавать виджеты, в том числ�
 // ./mediator.js
 import widgetly from 'widgetly'
 
-export default const mediator = widgetly({
+export const mediator = widgetly({
   // префикс для data-атрибутов при вставке виджетов через HTML-код
   prefix: 'rc'
 }, {
@@ -47,7 +47,7 @@ mediator.defineWidget(config, properties)
 
 ```js
 // ./widget.js
-import mediator from './mediator'
+import {mediator} from './mediator'
 // импортируем лэйаут встроенного виджета
 import {EmbedLayout} from 'widgetly'
 
@@ -92,7 +92,7 @@ mediator.defineWidget({
 
 ```js
 // ./widget.js
-import mediator from './mediator'
+import {mediator} from './mediator'
 // импортируем лэйаут встроенного виджета
 import {OverlayLayout} from 'widgetly'
 
@@ -169,7 +169,7 @@ registerIFrame(config, properties)
 // ./app.js
 import React, {useEffect} from 'react'
 
-const App = ({transport, onReady}) => {
+export const App = ({transport, onReady}) => {
   useEffect(() => {
     onReady()
   }, [onReady])
@@ -217,7 +217,7 @@ registerIFrame({
 import React from 'react'
 import './mediator'
 
-const App = () => {
+export const App = () => {
   return (
     <div
       data-rc-widget="EmbedComments"
