@@ -30,8 +30,9 @@ class IFrameResizer {
   resize() {
     const newSize = this.getSize()
     const isSizeChanged =
-      newSize.width !== this.currentSize.width ||
-      newSize.height !== this.currentSize.height
+      !this.currentSize ||
+      (newSize.width !== this.currentSize.width ||
+        newSize.height !== this.currentSize.height)
     if (isSizeChanged) {
       this.transport.provider.setSize(newSize)
       this.currentSize = newSize
