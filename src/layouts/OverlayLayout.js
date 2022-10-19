@@ -32,9 +32,9 @@ export default class OverlayLayout extends BaseLayout {
       <div class="${css.OverlayLayout__wrapper}">
         ${
   this.spinner
-    ? `<div class="${css.Loader}" id="${this.loaderId}">${
-      this.spinner
-    }</div>`
+    ? `<div class="${css.OverlayLayout__loader}" id="${
+      this.loaderId
+    }">${this.spinner}</div>`
     : ''
 }
         <div class="${css.OverlayLayout__content}" id="${this.contentId}"></div>

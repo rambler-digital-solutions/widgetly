@@ -7,11 +7,8 @@
   z-index: 16777271;
   transition: opacity .2s;
   opacity: 1;
-  &.is-loading {
-    opacity: 0;
-    pointer-events: none;
-  }
-  &.is-hidden {
+  &.is-hidden,
+  &.is-loading &__content {
     opacity: 0;
     pointer-events: none;
   }
@@ -39,9 +36,10 @@
   }
 }
 
-.Loader {
+.OverlayLayout__loader {
+  display: none;
   &.is-shown {
-
+    display: block;
   }
 }
 

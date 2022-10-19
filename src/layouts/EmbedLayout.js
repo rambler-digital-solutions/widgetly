@@ -4,7 +4,6 @@ import {removeFromDOM, setClass, toggleClass, findById} from '../utils/DOM'
 import {once, autobind} from '../utils/decorators'
 
 export default class EmbedLayout extends BaseLayout {
-
   /**
    * @param {String} spinner - HTML шаблон спиннера
    */
@@ -14,9 +13,15 @@ export default class EmbedLayout extends BaseLayout {
     this.contentId = `${this.id}_content`
     this.loaderId = `${this.id}_loader`
     this.element.innerHTML = `
-      <div class="${css.Wrapper}">
-        ${this.spinner ? `<div class="${css.Loader}" id="${this.loaderId}">${this.spinner}</div>` : ''}
-        <div class="${css.Content}" id="${this.contentId}"></div>
+      <div class="${css.EmbedLayout__wrapper}">
+        ${
+  this.spinner
+    ? `<div class="${css.EmbedLayout__loader}" id="${this.loaderId}">${
+      this.spinner
+    }</div>`
+    : ''
+}
+        <div class="${css.EmbedLayout__content}" id="${this.contentId}"></div>
       </div>
     `
     this.contentElement = findById(this.contentId, this.element)
@@ -89,5 +94,4 @@ export default class EmbedLayout extends BaseLayout {
     removeFromDOM(this.element)
     this.emit('destroy')
   }
-
 }

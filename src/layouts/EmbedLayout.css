@@ -2,7 +2,7 @@
   overflow: hidden;
   clear: both;
   &.is-hidden,
-  &.is-loading .Content {
+  &.is-loading &__content {
     height: 0;
     visibility: hidden;
   }
@@ -11,14 +11,14 @@
   }
 }
 
-.Loader {
+.EmbedLayout__loader {
   display: none;
   &.is-shown {
     display: block;
   }
 }
 
-.Content {
+.EmbedLayout__content {
   overflow: hidden;
   & iframe {
     /*
@@ -31,6 +31,6 @@
   }
 }
 
-.Wrapper {
+.EmbedLayout__wrapper {
   position: static;
 }
