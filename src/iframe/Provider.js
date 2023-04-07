@@ -112,7 +112,8 @@ export default class IFrameProvider extends ContentElement {
     if (!this.viewportManager)
       this.viewportManager = createViewportManager(
         this.element,
-        this.updateViewport
+        this.updateViewport,
+        this.widget.config.reduceViewportChange
       )
   }
 

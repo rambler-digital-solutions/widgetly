@@ -39,6 +39,7 @@ export default class Widget {
    * @param {Function} [config.destroy] - Функция удаления виджета, эту функцию должен вызвать пользователь при удалнии виджета
    * @param {Function} [config.externalize] - Этот метод должен возвращать фасад с методами, которые будут доступны пользователю
    * @param {Function} [config.externalizeAsProvider] - Этот метод должен возвращать фасад с методами, которые будут доступны айфрейму
+   * @param {Function} [config.reduceViewportChange] - Этот метод будет вызываться для замедления в createViewportManager, если он отсутствует, используется стандартный debounce
    * @param {Object} properties - Свойства виджета, этот объект копируется как есть в виджет(this) и дополняет его этими свойствами
    * @param {Object} params - Некоторые внешние параметры для виджета
    * Можно указать объект с любыми свойствами, за исключением зарезервированных (и свойств начинающихся на _):
@@ -55,6 +56,7 @@ export default class Widget {
    * - externalize
    * - externalizeAsProvider
    * - whenContainerInViewport
+   * - reduceViewportChange
    */
   constructor(mediator, id, config, properties, params) {
     EventEmitter.call(this)

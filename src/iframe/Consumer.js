@@ -18,6 +18,10 @@ class IFrameResizer {
       leading: true,
       trailing: true
     })
+    this.currentSize = {
+      width: 0,
+      height: 0
+    }
   }
 
   getSize() {

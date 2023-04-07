@@ -66,11 +66,15 @@ window.addEventListener('resize', onViewportChangeHandler)
  * Создает сущность, которая следит за изменением viewport элемента
  * @param  {HTMLElement} element  - Элемент
  * @param  {Function}    callback - Колбек изменения вьюпорта
- * @param  {Number}      duration - время задержки вызова коллбека, по-умолчанию 200
+ * @param  {Number | Function}      duration - время задержки вызова коллбека, по-умолчанию 200 или колбэк,  который осуществляет замедление
  * @return {Object}      Объект со свойством "destroy"
  */
 export function createViewportManager(element, callback, duration = 200) {
-  const debouncedCallback = debounce(callback, duration)
+  const debouncedCallback =
+    typeof duration === 'function'
+      ? duration(callback)
+      : debounce(callback, duration)
+
   let parent
   let subscribedOnParentScroll
   if (element) {
