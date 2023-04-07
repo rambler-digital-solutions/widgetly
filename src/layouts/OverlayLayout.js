@@ -3,12 +3,17 @@
 import BaseLayout from './BaseLayout'
 import css from './OverlayLayout.css'
 import {once, autobind} from '../utils/decorators'
-import {removeFromDOM, onRemoveFromDOM, setClass, toggleClass, findById} from '../utils/DOM'
+import {
+  removeFromDOM,
+  onRemoveFromDOM,
+  setClass,
+  toggleClass,
+  findById
+} from '../utils/DOM'
 
 const ANIMATION_DURATION = 200
 
 export default class OverlayLayout extends BaseLayout {
-
   /**
    * @param {Object} config - опции
    * @param {String} [config.spinner] - HTML шаблон спиннера
@@ -25,13 +30,25 @@ export default class OverlayLayout extends BaseLayout {
     this.loaderId = `${this.id}_loader`
     this.element.innerHTML = `
       <div class="${css.OverlayLayout__wrapper}">
-        ${this.spinner ? `<div class="${css.Loader}" id="${this.contentId}">${this.spinner}</div>` : ''}
+        ${
+  this.spinner
+    ? `<div class="${css.OverlayLayout__loader}" id="${
+      this.loaderId
+    }">${this.spinner}</div>`
+    : ''
+}
         <div class="${css.OverlayLayout__content}" id="${this.contentId}"></div>
       </div>
     `
     this.contentElement = findById(this.contentId, this.element)
     this.loaderElement = findById(this.loaderId, this.element)
-    setClass(this.element, css.OverlayLayout, css['is-hidden'], config.className, !!this.config.animationDuration && css['no-animate'])
+    setClass(
+      this.element,
+      css.OverlayLayout,
+      css['is-hidden'],
+      config.className,
+      !!this.config.animationDuration && css['no-animate']
+    )
     onRemoveFromDOM(this.element, this.destroy)
   }
 
@@ -77,7 +94,10 @@ export default class OverlayLayout extends BaseLayout {
   hide() {
     toggleClass(this.element, css['is-hidden'], true)
     clearTimeout(this.moveBehindTimeout)
-    this.moveBehindTimeout = setTimeout(this.moveBehind, this.config.animationDuration)
+    this.moveBehindTimeout = setTimeout(
+      this.moveBehind,
+      this.config.animationDuration
+    )
   }
 
   /**
@@ -118,5 +138,4 @@ export default class OverlayLayout extends BaseLayout {
     removeFromDOM(this.element)
     this.emit('destroy')
   }
-
 }
