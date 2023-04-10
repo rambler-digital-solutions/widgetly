@@ -5,14 +5,18 @@ import {once, mixin, autobind} from './utils/decorators'
 
 @mixin(EventEmitter.prototype)
 export default class Container {
-
   /**
    * Конструктор контейнера
    * @param {HTMLElement} element - DOM-элемент контейнера
    */
-  constructor(element) {
+  /**
+   * Метод для создания замедления
+   * @param {Function} reduceViewportChange
+   */
+  constructor(element, reduceViewportChange) {
     EventEmitter.call(this)
     this.element = element
+    this.reduceViewportChange = reduceViewportChange
     this._ready = false
     this.emit('ready')
     onRemoveFromDOM(this.element, this.destroy)
@@ -37,8 +41,7 @@ export default class Container {
   destroy() {
     this.emit('destroy')
     this.removeAllListeners()
-    if (this.viewportManager)
-      this.viewportManager.destroy()
+    if (this.viewportManager) this.viewportManager.destroy()
   }
 
   updateViewport() {
@@ -48,7 +51,11 @@ export default class Container {
   @once
   _subscribeScroll() {
     if (!this.viewportManager)
-      this.viewportManager = createViewportManager(this.element, this._onScroll)
+      this.viewportManager = createViewportManager(
+        this.element,
+        this._onScroll,
+        this.reduceViewportChange
+      )
   }
 
   @autobind
@@ -64,13 +71,11 @@ export default class Container {
    */
   whenEnterViewportFromTop({lazy = false, offset = 300}) {
     const vpOptions = {offset, compliantScrollDown: true}
-    if (!lazy)
-      this._ready = Promise.resolve()
+    if (!lazy) this._ready = Promise.resolve()
     else if (!this._ready)
-      if (isVisible(this.element, vpOptions))
-        this._ready = Promise.resolve()
+      if (isVisible(this.element, vpOptions)) this._ready = Promise.resolve()
       else
-        this._ready = new Promise((resolve) => {
+        this._ready = new Promise(resolve => {
           this._subscribeScroll()
           const onScroll = () => {
             if (isVisible(this.element, vpOptions)) {
@@ -82,5 +87,4 @@ export default class Container {
         })
     return this._ready
   }
-
 }
