@@ -33,11 +33,12 @@ export default class IFrameProvider extends ContentElement {
    * @param {String} options.url - URL по которому нужно загрузить iframe
    * @param {Widget} options.widget - Объект виджета
    * @param {String} options.id - Уникальный идентификатор виджета
+   * @param {Function} options.reduceViewportChange - Метод создания замедления
    *
    * @events
    * viewportChange - событие которое вызывается, когда вьюпорт элемента изменени
    */
-  constructor(url, widget, id) {
+  constructor(url, widget, id, reduceViewportChange) {
     super()
     EventEmitter.call(this)
     // Создаем элемент iframe
@@ -45,6 +46,7 @@ export default class IFrameProvider extends ContentElement {
     this.url =
       url + (url.indexOf('#') === -1 ? '#' : '&') + 'widgetId=' + this.id
     this.widget = widget
+    this.reduceViewportChange = reduceViewportChange
 
     this._destroyed = false
 
@@ -113,7 +115,7 @@ export default class IFrameProvider extends ContentElement {
       this.viewportManager = createViewportManager(
         this.element,
         this.updateViewport,
-        this.widget.config.reduceViewportChange
+        this.reduceViewportChange
       )
   }
 

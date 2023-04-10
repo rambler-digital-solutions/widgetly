@@ -108,7 +108,7 @@ export default class Widget {
    * @param {String} url - Адрес, где расположен iframe
    */
   createIFrame(url) {
-    return new IFrame(url, this, this.id)
+    return new IFrame(url, this, this.id, this.config.reduceViewportChange)
   }
 
   /**

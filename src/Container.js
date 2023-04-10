@@ -9,9 +9,14 @@ export default class Container {
    * Конструктор контейнера
    * @param {HTMLElement} element - DOM-элемент контейнера
    */
-  constructor(element) {
+  /**
+   * Метод для создания замедления
+   * @param {Function} reduceViewportChange
+   */
+  constructor(element, reduceViewportChange) {
     EventEmitter.call(this)
     this.element = element
+    this.reduceViewportChange = reduceViewportChange
     this._ready = false
     this.emit('ready')
     onRemoveFromDOM(this.element, this.destroy)
@@ -49,7 +54,7 @@ export default class Container {
       this.viewportManager = createViewportManager(
         this.element,
         this._onScroll,
-        this.element.rcWidget.config.reduceViewportChange
+        this.reduceViewportChange
       )
   }
 
