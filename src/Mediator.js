@@ -138,10 +138,7 @@ export default class Mediator {
     ))
     widget.once('destroy', () => delete this.widgetInstances[id])
     widget.container = containerElement
-      ? new Container(
-        containerElement,
-        this.widgets[name].config.reduceViewportChange
-      )
+      ? new Container(containerElement, config.reduceViewportChange)
       : null
     if (containerElement) containerElement.rcWidget = widget
     return widget.initialize()
