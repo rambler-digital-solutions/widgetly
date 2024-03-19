@@ -1,0 +1,26 @@
+[
+  {
+    "name": "The size of the Mediator",
+    "limit": "3.9 KB",
+    "path": "dist/index.js",
+    "import": "{createMediator}"
+  },
+  {
+    "name": "The size of the Embed layout",
+    "limit": "3.9 KB",
+    "path": "dist/index.js",
+    "import": "{EmbedLayout}"
+  },
+  {
+    "name": "The size of the Overlay layout",
+    "limit": "3.9 KB",
+    "path": "dist/index.js",
+    "import": "{OverlayLayout}"
+  },
+  {
+    "name": "The size of the Consumer",
+    "limit": "3.9 KB",
+    "path": "dist/index.js",
+    "import": "{registerIFrame}"
+  }
+]

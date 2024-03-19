@@ -1,0 +1,40 @@
+.EmbedLayout {
+  overflow: hidden;
+  clear: both;
+
+  &.is-hidden,
+  &.is-loading &__content {
+    height: 0;
+    visibility: hidden;
+  }
+
+  & * {
+    box-sizing: border-box;
+  }
+}
+
+.EmbedLayout__loader {
+  display: none;
+
+  &.is-shown {
+    display: block;
+  }
+}
+
+.EmbedLayout__content {
+  overflow: hidden;
+
+  & iframe {
+    /*
+    http://stackoverflow.com/questions/23083462/how-to-get-an-iframe-to-be-responsive-in-ios-safari
+    */
+    display: block;
+    width: 1px;
+    max-width: 100%;
+    min-width: 100%;
+  }
+}
+
+.EmbedLayout__wrapper {
+  position: static;
+}
