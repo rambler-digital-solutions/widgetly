@@ -57,6 +57,8 @@ export default class EmbedLayout extends BaseLayout {
    */
   hide() {
     toggleClass(this.element, css['is-hidden'], true)
+
+    this.emit('hide')
   }
 
   /**
