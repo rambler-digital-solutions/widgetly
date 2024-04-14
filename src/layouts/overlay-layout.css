@@ -7,7 +7,7 @@
     opacity: 1;
 
     &.is-hidden,
-    &.is-loading &__content {
+    &.is-loading .OverlayLayout__content {
       opacity: 0;
       pointer-events: none;
     }
@@ -31,7 +31,7 @@
   opacity: 1;
 
   &.is-hidden,
-  &.is-loading &__content {
+  &.is-loading .OverlayLayout__content {
     opacity: 0;
     pointer-events: none;
   }

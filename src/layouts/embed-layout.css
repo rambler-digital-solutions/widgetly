@@ -3,7 +3,7 @@
   clear: both;
 
   &.is-hidden,
-  &.is-loading &__content {
+  &.is-loading .EmbedLayout__content {
     height: 0;
     visibility: hidden;
   }
