@@ -1,10 +1,18 @@
 import {IFrameProvider} from './iframe/provider'
-import {EventEmitter} from './utils/event-emitter'
+import {EventEmitter, type ExternalizedEmitter} from './utils/event-emitter'
 import {scrollByElementTo} from './utils/dom'
 import type {Debounce, Callback} from './types'
 import type {Mediator} from './mediator'
 import type {Container, EnterViewportOptions} from './container'
 import {BaseLayout} from './layouts/base-layout'
+
+/**
+ * Фасад виджета доступный пользователю
+ */
+export interface ExternalizedWidget extends ExternalizedEmitter {
+  params: Record<string, any>
+  destroy(): void
+}
 
 /**
  * Конфигурация виджета

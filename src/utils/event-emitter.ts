@@ -4,7 +4,7 @@ interface ExternalizeEmitterParams {
   withEmit?: boolean
 }
 
-type ExternalizedEmitter = Pick<
+export type ExternalizedEmitter = Pick<
   EventEmitter,
   'on' | 'once' | 'removeListener' | 'emit'
 >

@@ -3,7 +3,7 @@ import {randomId} from './utils/random-id'
 import {mutationEvents} from './utils/dom'
 import {EventEmitter} from './utils/event-emitter'
 import {Container} from './container'
-import {Widget, type WidgetConfig} from './widget'
+import {Widget, type WidgetConfig, type ExternalizedWidget} from './widget'
 
 /**
  * Конфигурация медиатора
@@ -143,7 +143,7 @@ export class Mediator extends EventEmitter {
     name: string,
     containerElement: HTMLElement | string,
     params?: Record<string, any>
-  ): Promise<Widget>
+  ): Promise<ExternalizedWidget>
 
   /**
    * Создание виджета и установка его на страницу
@@ -154,13 +154,13 @@ export class Mediator extends EventEmitter {
   public buildWidget(
     name: string,
     params?: Record<string, any>
-  ): Promise<Widget>
+  ): Promise<ExternalizedWidget>
 
   public buildWidget(
     name: string,
     containerElement?: HTMLElement | string | Record<string, any>,
     params?: Record<string, any>
-  ): Promise<Widget> {
+  ): Promise<ExternalizedWidget> {
     if (!this.widgets[name]) {
       throw new Error(`Widget '${name}' does not exists`)
     }
@@ -209,7 +209,7 @@ export class Mediator extends EventEmitter {
     return widget.initialize()
   }
 
-  updateViewport = () => {
+  public updateViewport = () => {
     const widgets = this.widgetInstances
 
     for (const key in widgets) {
@@ -222,7 +222,7 @@ export class Mediator extends EventEmitter {
   /**
    * Инициализация DOM-элементов
    */
-  initializeDOMElements = () => {
+  private initializeDOMElements = () => {
     const prefix = this.prefix ? `${this.prefix}-` : ''
     const elements = [].slice.call(
       document.querySelectorAll(
@@ -262,7 +262,7 @@ export class Mediator extends EventEmitter {
   /**
    * Фабрика, которая экспортирует фасад, доступный виджету
    */
-  externalize() {
+  public externalize() {
     return {
       buildWidget: this.buildWidget.bind(this),
       initializeDOMElements: this.initializeDOMElements.bind(this),
@@ -274,7 +274,7 @@ export class Mediator extends EventEmitter {
   /**
    * Фабрика, которая экспортирует фасад, доступный внутри iframe
    */
-  externalizeAsProvider() {
+  public externalizeAsProvider() {
     return {
       buildWidget: this.buildWidget.bind(this),
       initializeDOMElements: this.initializeDOMElements.bind(this),
@@ -286,7 +286,7 @@ export class Mediator extends EventEmitter {
 
 export function createMediator(
   config: MediatorConfig,
-  properties: Record<string, any>
+  properties?: Record<string, any>
 ) {
   return new Mediator(config, properties)
 }
