@@ -1,0 +1,72 @@
+@media screen and (prefers-reduced-motion: reduce) {
+  .OverlayLayout {
+    position: fixed;
+    inset: 0;
+    z-index: 16777271;
+    transition: none;
+    opacity: 1;
+
+    &.is-hidden,
+    &.is-loading .OverlayLayout__content {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    &.is-behind {
+      visibility: hidden;
+      z-index: -1;
+    }
+
+    & * {
+      box-sizing: border-box;
+    }
+  }
+}
+
+.OverlayLayout {
+  position: fixed;
+  inset: 0;
+  z-index: 16777271;
+  transition: opacity 0.2s;
+  opacity: 1;
+
+  &.is-hidden,
+  &.is-loading .OverlayLayout__content {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  &.is-behind {
+    visibility: hidden;
+    z-index: -1;
+  }
+
+  & * {
+    box-sizing: border-box;
+  }
+}
+
+.OverlayLayout__wrapper {
+  position: static;
+}
+
+.OverlayLayout__content {
+  &,
+  & > iframe {
+    position: absolute;
+    inset: 0;
+    height: 100% !important;
+  }
+}
+
+.OverlayLayout__loader {
+  display: none;
+
+  &.is-shown {
+    display: block;
+  }
+}
+
+.no-animate {
+  transition: none !important;
+}
