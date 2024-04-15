@@ -1,7 +1,7 @@
 {
   "extends": "@rambler-tech/typedoc-config",
   "customTitle": "Widgetly",
-  "customDescription": "Library helps you to create iframe widgets",
+  "customDescription": "Library that helps you to create widgets, including widgets that work via an iframe",
   "readme": "README.md",
   "entryPoints": ["src/index.ts"],
   "out": "public",

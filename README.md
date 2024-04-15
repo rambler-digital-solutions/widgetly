@@ -1,10 +1,10 @@
 # Widgetly
 
-Library helps you to create widgets, including widgets that work via an iframe.
+Library that helps you to create widgets, including widgets that work via an iframe.
 
 ## Main goals
 
-* Reusable Widgets: extract some business logic into a universal widget, which can then be easily reused across various applications. A single widget can be integrated into numerous applications without the need to change its code.
+* Reusable widgets: extract some business logic into a universal widget, which can then be easily reused across various applications. A single widget can be integrated into numerous applications without the need to change its code.
 * API: create an external interface for interacting with the widget, that provides for developers methods to control the widget, receive data from it, and send data to the widget.
 * Transport: use built-in mechanism for sync data and methods between the application, widget, and iframe, without using `postMessage` directly.
 * Framework agnostic: use any libraries and frameworks to create widgets and applications that embed them, increasing flexibility and development speed.
