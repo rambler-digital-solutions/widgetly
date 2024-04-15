@@ -20,7 +20,7 @@ export interface ExternalizedWidget extends ExternalizedEmitter {
 export interface WidgetConfig {
   /** Уникальное название виджета */
   name: string
-  /** Функция инициализации виджета */
+  /** Функция инициализации виджета, должна отрисовывать виджет */
   initialize(this: Widget): void
   /** Функция удаления виджета, эту функцию должен вызвать пользователь при удалнии виджета */
   destroy?(this: Widget): void

@@ -4,10 +4,10 @@ Library helps you to create widgets, including widgets that work via an iframe.
 
 ## Main goals
 
-- Reusable Widgets: Extract some business logic into a universal widget, which can then be easily reused across various applications. A single widget can be integrated into numerous applications without the need to change its code.
-- API: Create an external interface for interacting with the widget, that provides for developers methods to control the widget, receive data from it, and send data to the widget.
-- Transport: Use built-in mechanism for sync data and methods between the application, widget, and iframe, without using `postMessage` directly.
-- Framework agnostic: Use any libraries and frameworks to create widgets and applications that embed them, increasing flexibility and development speed.
+* Reusable Widgets: extract some business logic into a universal widget, which can then be easily reused across various applications. A single widget can be integrated into numerous applications without the need to change its code.
+* API: create an external interface for interacting with the widget, that provides for developers methods to control the widget, receive data from it, and send data to the widget.
+* Transport: use built-in mechanism for sync data and methods between the application, widget, and iframe, without using `postMessage` directly.
+* Framework agnostic: use any libraries and frameworks to create widgets and applications that embed them, increasing flexibility and development speed.
 
 ## Install
 
@@ -50,11 +50,11 @@ export const mediator = createMediator({
 
 After creating the mediator, you can start declaring widgets via the factory.
 
-```js
+```ts
 mediator.defineWidget(config, properties)
 ```
 
-#### Embedded widget
+#### Embedded widgets
 
 ```ts
 // ./widget.ts
@@ -70,7 +70,7 @@ mediator.defineWidget({
   // - should render the widget
   async initialize() {
     // Wait until the widget enters the viewport
-    await this.container.whenEnterViewport({ lazy: true })
+    await this.container.whenEnterViewport({lazy: true})
     // Create an iframe tied to the current widget
     this.iframe = this.createIframe(iframeUrl)
     // Create an embedded layout
@@ -96,7 +96,7 @@ mediator.defineWidget({
 })
 ```
 
-#### Overlay widget
+#### Overlay widgets
 
 ```ts
 // ./widget.ts
@@ -114,7 +114,7 @@ mediator.defineWidget({
     // Create an iframe tied to the current widget
     this.iframe = this.createIframe(iframeUrl)
     // Create an overlay layout
-    this.layout = new OverlayLayout({ hidden: true })
+    this.layout = new OverlayLayout({hidden: true})
     this.layout.setContainer(this.container)
     this.layout.setContent(this.iframe)
     // Wait until the widget renders in iframe
@@ -124,54 +124,27 @@ mediator.defineWidget({
 })
 ```
 
-### Лэйаут
+### Layout
 
-Лэйаут представляет собой элемент, в который вставляется iframe и лоадер.
+Layout is an element into which an iframe and loader are inserted.
 
-Лэйауты существуют следующих типов:
+There are following types of layouts:
 
-| Тип | Описание |
-|-----|----------|
-| EmbedLayout | Лэйаут встраиваемый в конкретный элемент на странице |
-| OverlayLayout | Лэйаут-оверлей, может использоваться для модальных окон |
-| SidebarLayout | Лэйаут для виджета, показываемого в сайдбаре |
+* EmbedLayout – Embeds into a specific element on the page
+* OverlayLayout – Overlay, can be used for modal windows
 
-Каждый лэйаут должен реализовывать следующий интерфейс:
+### Widgets with iframe
 
-| Метод/Свойство | Описание |
-|----------------|----------|
-| `constructor(options)` | Конструктор класса |
-| `initialize(container)`| Инициализация виджета |
-| `showLoading()` | Показать статус загрузки |
-| `hideLoading()` | Скрыть статус загрузки |
-| `setContent({ContentElement})` | Установить контент для лэйаута |
-| `hide()` | Скрыть лэйаут |
-| `show()` | Показать лэйаут |
-| `destroy()` | Этот метод должен удалять `layout.element` из DOM |
-| `id` | уникальный ID лэйаута |
-| `events` | EventEmitter лэйаута. Должен кидать следующие события: `destroy` |
-| `element` | Рутовый элемент лэйаута |
+Inside the iframe, you need to wrap the initialization of your widget.
 
-### IFrame
-
-Внутри айфрейма нужно обернуть инициализацию вашего виджета:
-
-```js
+```ts
 registerIFrame(config, properties)
 ```
 
-| Название параметра | Тип | Описание |
-|---|---|---|
-| `config` | `Object*` | Конфиг |
-| `config.initialize` | `Function*` | Функция инициализации виджета. Должна отрисовывать приложение и возвращать `Promise` |
-| `config.externalizeAsConsumer` | `Function` | Этот метод должен возвращать фасад с методами, которые будут доступны виджету |
-| `config.externalize` | `Function` | Этот метод должен возвращать фасад с методами, которые видны снаружи виджета |
-| `properties` | `Object` | Дополнительные свойства |
+#### Example
 
-#### Пример инициализации
-
-```js
-// ./app.js
+```tsx
+// ./app.tsx
 import React, {useEffect} from 'react'
 
 export const App = ({transport, onReady}) => {
@@ -189,36 +162,36 @@ export const App = ({transport, onReady}) => {
 }
 ```
 
-```js
-// ./iframe.js
+```tsx
+// ./iframe.tsx
 import React from 'react'
-import {render} from 'react-dom'
+import {createRoot} from 'react-dom/client'
 import {registerIFrame} from 'widgetly'
-import App from './app'
+import {App} from './app'
 
-const container = document.getElementById('my_app')
+const rootElement = document.getElementById('my_app')
+const root = createRoot(rootElement)
 
 registerIFrame({
-  initialize() {
-    return new Promise(resolve => {
-      const app = (
+  async initialize() {
+    await new Promise(resolve => {
+      root.render(
         <App 
           transport={this} 
           onReady={resolve} 
         />
       )
-      render(app, container)
     })
   }
 })
 ```
 
-### Использование виджетов
+### Using widgets
 
-Медиатор может создавать виджеты автоматически в контейнеры с соответствующими data атрибутами при появлении его в DOM.
+The mediator can automatically create widgets in containers with the corresponding data attributes when it appears in the DOM.
 
-```js
-// ./app.js
+```ts
+// ./app.ts
 import React from 'react'
 import './mediator'
 
@@ -233,22 +206,16 @@ export const App = () => {
 }
 ```
 
-Для получения полного контроля над виджета, его можно создавать через фабрику, которая имеет следующий интерфейс (поля, отмеченные `*` - обязательны):
+Or create widget through the factory to gain full control over the widget.
 
-```js
+```ts
 mediator.buildWidget(name, containerElement, params)
 ```
 
-| Название параметра | Тип | Описание |
-|---|---|---|
-| `name` | `String*` | Название виджета |
-| `containerElement` | `HTMLElement|String*` | Элемент/селектор, в которой будет вставлен виджет |
-| `params` | `Object*` | Параметры инициализации виджета |
+#### Example of creating a widget
 
-#### Пример создания виджета
-
-```js
-// ./app.js
+```ts
+// ./app.ts
 import mediator from './mediator'
 
 const container = document.getElementById('my_comments');
@@ -257,7 +224,7 @@ mediator.buildWidget('EmbedComments', container, {
   appId: APP_ID,
   pageUrl: window.location.pathname
 }).then(widget => {
-  // В этот момент можно пользоваться методами инстанции виджета
+  // At this moment, you can use the widget external methods
 });
 ```
 

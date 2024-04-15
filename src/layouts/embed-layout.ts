@@ -5,7 +5,7 @@ import {BaseLayout} from './base-layout'
 import css from './embed-layout.css'
 
 /**
- * Конфигурация встроенного виджета
+ * Конфигурация встроенного лейаута
  */
 export interface EmbedLayoutConfig {
   /** HTML-шаблон спиннера */
@@ -13,7 +13,7 @@ export interface EmbedLayoutConfig {
 }
 
 /**
- * Встроенный виджет
+ * Встроенный лейаут
  *
  * @event destroy Закрытие лэйаута
  */
@@ -26,9 +26,9 @@ export class EmbedLayout extends BaseLayout<EmbedLayoutConfig> {
   private destroyed = false
 
   /**
-   * Создание новой инстанции виджета
+   * Создание нового лейаута
    *
-   * @param config Конфигурация виджета
+   * @param config Конфигурация лейаута
    */
   public constructor(config: EmbedLayoutConfig = {}) {
     super(config)

@@ -12,7 +12,7 @@ import css from './overlay-layout.css'
 const ANIMATION_DURATION = 200
 
 /**
- * Конфигурация виджета открываемого в модальном окне
+ * Конфигурация лейаута открываемого в модальном окне
  */
 export interface OverlayLayoutConfig {
   /** HTML-шаблон спиннера */
@@ -26,7 +26,7 @@ export interface OverlayLayoutConfig {
 }
 
 /**
- * Виджет открываемый в модальном окне
+ * Лейаут открываемый в модальном окне
  *
  * @event destroy Закрытие лэйаута
  */
@@ -40,9 +40,9 @@ export class OverlayLayout extends BaseLayout<OverlayLayoutConfig> {
   private destroyed = false
 
   /**
-   * Создание новой инстанции виджета
+   * Создание нового лейаута
    *
-   * @param config Конфигурация виджета
+   * @param config Конфигурация лейаута
    */
   public constructor(config: OverlayLayoutConfig = {}) {
     super(config)
@@ -100,10 +100,16 @@ export class OverlayLayout extends BaseLayout<OverlayLayoutConfig> {
     this.toggleLoading(false)
   }
 
+  /**
+   * Переместить лэйаут назад
+   */
   public moveBehind = () => {
     toggleClass(this.element, true, css['is-behind'])
   }
 
+  /**
+   * Переместить лэйаут вперед
+   */
   public moveFront = () => {
     toggleClass(this.element, false, css['is-behind'])
   }
