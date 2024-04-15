@@ -8,17 +8,26 @@ import {isVisible} from './utils/dom/viewport'
 import type {Debounce} from './types'
 import type {Widget} from './widget'
 
-interface ContainerElement extends HTMLElement {
+/**
+ * Container element
+ */
+export interface ContainerElement extends HTMLElement {
   rcWidget?: Widget
 }
 
+/**
+ * Options for waiting when the container enters the viewport
+ */
 export interface EnterViewportOptions {
-  /** Включить ленивую загрузку, по-умолчанию false */
+  /** Enable lazy loading, default is false */
   lazy?: boolean
-  /** Оффсет для ленивой загрузки, по-умолчанию 300 */
+  /** Offset for lazy loading, default is 300 */
   offset?: number
 }
 
+/**
+ * Container for widgets
+ */
 export class Container extends EventEmitter {
   private element: ContainerElement
   private reduceViewportChange?: Debounce
@@ -27,10 +36,10 @@ export class Container extends EventEmitter {
   private destroyed = false
 
   /**
-   * Конструктор контейнера
+   * Container constructor
    *
-   * @param element DOM-элемент контейнера
-   * @param reduceViewportChange Функция замедления обработки изменений
+   * @param element Container's DOM element
+   * @param reduceViewportChange Function to throttle viewport change events
    */
   public constructor(
     element: ContainerElement,
@@ -48,14 +57,14 @@ export class Container extends EventEmitter {
   }
 
   /**
-   * Добавить элемент с контентом
+   * Append content element
    */
   public appendChild(element: HTMLElement) {
     this.element.appendChild(element)
   }
 
   /**
-   * Уничтожить контейнер вручную
+   * Manually destroy the container
    */
   public destroy = () => {
     if (!this.destroyed) {
@@ -83,7 +92,7 @@ export class Container extends EventEmitter {
   }
 
   /**
-   * Метод возвращает Promise, который резолвится, когда контейнер входит во вьюпорт сверху
+   * Returns a Promise that resolves when the container enters the viewport from the top
    */
   public async whenEnterViewportFromTop(options: EnterViewportOptions) {
     const {lazy = false, offset = 300} = options

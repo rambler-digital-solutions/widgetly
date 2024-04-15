@@ -12,23 +12,23 @@ import css from './overlay-layout.css'
 const ANIMATION_DURATION = 200
 
 /**
- * Конфигурация лейаута открываемого в модальном окне
+ * Overlay layout configuration for modal window
  */
 export interface OverlayLayoutConfig {
-  /** HTML-шаблон спиннера */
+  /** HTML template for spinner */
   spinner?: string
-  /** CSS-класс, который добавляем к элементу */
+  /** CSS class added to element */
   className?: string
-  /** Длительность opacity анимации в ms, по-умолчанию 200 */
+  /** Duration of opacity animation in ms, default 200 */
   animationDuration?: number
-  /** Добавить скрытый layout в DOM */
+  /** Add hidden layout to DOM */
   hidden?: boolean
 }
 
 /**
- * Лейаут открываемый в модальном окне
+ * Layout for modal window
  *
- * @event destroy Закрытие лэйаута
+ * @event destroy Destroy layout
  */
 export class OverlayLayout extends BaseLayout<OverlayLayoutConfig> {
   private spinner: string
@@ -40,9 +40,9 @@ export class OverlayLayout extends BaseLayout<OverlayLayoutConfig> {
   private destroyed = false
 
   /**
-   * Создание нового лейаута
+   * Create a new layout
    *
-   * @param config Конфигурация лейаута
+   * @param config Layout configuration
    */
   public constructor(config: OverlayLayoutConfig = {}) {
     super(config)
@@ -74,7 +74,7 @@ export class OverlayLayout extends BaseLayout<OverlayLayoutConfig> {
   }
 
   /**
-   * Показать текущий лэйаут
+   * Show current layout
    */
   public addToDOM() {
     if (this.config.hidden) {
@@ -87,35 +87,35 @@ export class OverlayLayout extends BaseLayout<OverlayLayoutConfig> {
   }
 
   /**
-   * Показать загрузчик
+   * Show loader
    */
   public showLoading() {
     this.toggleLoading(true)
   }
 
   /**
-   * Скрыть загрузчик
+   * Hide loader
    */
   public hideLoading() {
     this.toggleLoading(false)
   }
 
   /**
-   * Переместить лэйаут назад
+   * Move layout behind
    */
   public moveBehind = () => {
     toggleClass(this.element, true, css['is-behind'])
   }
 
   /**
-   * Переместить лэйаут вперед
+   * Move layout to front
    */
   public moveFront = () => {
     toggleClass(this.element, false, css['is-behind'])
   }
 
   /**
-   * Скрыть лэйаут
+   * Hide layout
    */
   public hide() {
     toggleClass(this.element, true, css['is-hidden'])
@@ -127,7 +127,7 @@ export class OverlayLayout extends BaseLayout<OverlayLayoutConfig> {
   }
 
   /**
-   * Показать лэйаут
+   * Show layout
    */
   public show() {
     toggleClass(this.element, false, css['is-hidden'])
@@ -136,8 +136,8 @@ export class OverlayLayout extends BaseLayout<OverlayLayoutConfig> {
   }
 
   /**
-   * Показать/скрыть лоадер
-   * @param show Флаг скрытия/показа лоадера
+   * Toggle loader visibility
+   * @param show Flag to show/hide loader
    */
   public toggleLoading(show: boolean) {
     toggleClass(this.element, show, css['is-loading'])
@@ -145,8 +145,8 @@ export class OverlayLayout extends BaseLayout<OverlayLayoutConfig> {
   }
 
   /**
-   * Установить контент в лэйауте
-   * @param content Контент лэйаута
+   * Set content in layout
+   * @param content Layout content
    */
   public setContent(content: ContentElement) {
     this.content = content
@@ -154,8 +154,7 @@ export class OverlayLayout extends BaseLayout<OverlayLayoutConfig> {
   }
 
   /**
-   * Удаление элемента из DOM.
-   * В этот момент происходит отписка от событий
+   * Remove element from DOM
    */
   public destroy = () => {
     if (!this.destroyed) {

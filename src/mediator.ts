@@ -6,19 +6,19 @@ import {Container} from './container'
 import {Widget, type WidgetConfig, type ExternalizedWidget} from './widget'
 
 /**
- * Конфигурация медиатора
+ * Mediator configuration
  */
 export interface MediatorConfig {
-  /** Префикс для data-атрибутов */
+  /** Prefix for data-attributes */
   prefix: string
-  /** Функция инициализации */
+  /** Initialization function */
   initialize(): void
-  /** Фабрика, которая экспортирует фасад, доступный в iframe */
+  /** Factory that exports a facade available in an iframe */
   externalizeAsProvider?(this: Mediator): Record<string, any>
 }
 
 /**
- * Медиатор - фабрика виджетов
+ * Mediator - a widget factory
  */
 export class Mediator extends EventEmitter {
   public static provideId() {
@@ -26,12 +26,12 @@ export class Mediator extends EventEmitter {
   }
 
   /**
-   * Счетчик widgetId
+   * Widget identifier counter
    */
   private counterWidgetId = 0
 
   /**
-   * Виджеты
+   * Widgets
    */
   public widgets: Record<
     string,
@@ -39,21 +39,29 @@ export class Mediator extends EventEmitter {
   > = {}
 
   /**
-   * Инстанции виджетов
+   * Widget instances
    */
   public widgetInstances: Record<string, Widget> = {}
 
+  /**
+   * Mediator identifier
+   */
   public id: string
+
+  /**
+   * Prefix used for data-attributes
+   */
   public prefix: string
+
   private config: MediatorConfig
   private properties: Record<string, any>
 
   /**
-   * Создание новой инстанции медиатора
+   * Creating a new instance of the mediator
    *
-   * @param config Конфиг виджета
-   * @param properties Дополнительные свойства/методы для медиатора
-   * Можно указать объект с любыми свойствами, за исключением зарезервированных (и свойств начинающихся на _):
+   * @param config Widget configuration
+   * @param properties Additional properties/methods for the mediator
+   * You can specify an object with any properties, except for reserved ones (and properties starting with _):
    * - config
    * - prefix
    * - id
@@ -99,12 +107,15 @@ export class Mediator extends EventEmitter {
     domready(this.initializeDOMElements)
   }
 
+  /**
+   * Destroy the mediator and stop listening to DOM events
+   */
   public destroy() {
     mutationEvents.removeListener('mutation', this.initializeDOMElements)
   }
 
   /**
-   * Получить айдишник для виджета
+   * Get widget identifier
    */
   private provideWidgetId() {
     const prefix = this.prefix ? `${this.prefix}_` : ''
@@ -113,10 +124,10 @@ export class Mediator extends EventEmitter {
   }
 
   /**
-   * Определяем виджет
+   * Define a widget
    *
-   * @param config Конфиг виджета
-   * @param properties Дополнительные свойства виджета, этот объект копируется в виджет как есть и дополняет его этими свойствами
+   * @param config Widget configuration
+   * @param properties Additional widget properties, this object is copied to the widget as is and supplements it with these properties
    */
   public defineWidget(
     config: WidgetConfig,
@@ -133,11 +144,11 @@ export class Mediator extends EventEmitter {
   }
 
   /**
-   * Создание виджета и установка его на страницу
+   * Create a widget and place it on the page
    *
-   * @param name Название виджета
-   * @param containerElement Элемент/селектор, в которой будет вставлен виджет
-   * @param params Параметры инициализации виджета
+   * @param name Widget name
+   * @param containerElement Element/selector where the widget will be inserted
+   * @param params Widget initialization parameters
    */
   public buildWidget(
     name: string,
@@ -146,10 +157,10 @@ export class Mediator extends EventEmitter {
   ): Promise<ExternalizedWidget>
 
   /**
-   * Создание виджета и установка его на страницу
+   * Create a widget and place it on the page
    *
-   * @param name Название виджета
-   * @param params Параметры инициализации виджета
+   * @param name Widget name
+   * @param params Widget initialization parameters
    */
   public buildWidget(
     name: string,
@@ -220,7 +231,7 @@ export class Mediator extends EventEmitter {
   }
 
   /**
-   * Инициализация DOM-элементов
+   * Initialization of DOM elements
    */
   private initializeDOMElements = () => {
     const prefix = this.prefix ? `${this.prefix}-` : ''
@@ -240,7 +251,7 @@ export class Mediator extends EventEmitter {
       if (this.prefix) {
         const prefixLen = this.prefix.length
 
-        // убираем префикс
+        // removing prefix
         for (const key in dataset)
           if (dataset.hasOwnProperty(key)) {
             const newKey =
@@ -260,7 +271,7 @@ export class Mediator extends EventEmitter {
   }
 
   /**
-   * Фабрика, которая экспортирует фасад, доступный виджету
+   * Factory that exports a facade available to the widget
    */
   public externalize() {
     return {
@@ -272,7 +283,7 @@ export class Mediator extends EventEmitter {
   }
 
   /**
-   * Фабрика, которая экспортирует фасад, доступный внутри iframe
+   * Factory that exports a facade available inside an iframe
    */
   public externalizeAsProvider() {
     return {
@@ -284,6 +295,12 @@ export class Mediator extends EventEmitter {
   }
 }
 
+/**
+ * Creating a mediator
+ *
+ * @param config Configuration
+ * @param properties Additional properties
+ */
 export function createMediator(
   config: MediatorConfig,
   properties?: Record<string, any>

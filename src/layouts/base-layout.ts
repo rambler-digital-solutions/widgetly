@@ -5,9 +5,9 @@ import type {Container} from '../container'
 import type {ContentElement} from './content-element'
 
 /**
- * Базовый лэйаут
+ * Basic layout
  *
- * @event destroy Закрытие лэйаута
+ * @event destroy Destroy layout
  */
 export abstract class BaseLayout<T = any> extends EventEmitter {
   public id: string
@@ -24,42 +24,45 @@ export abstract class BaseLayout<T = any> extends EventEmitter {
     onRemoveFromDOM(this.element, this.destroy)
   }
 
+  /**
+   * Get the current layout element
+   */
   public getElement() {
     return this.element
   }
 
   /**
-   * Показать загрузчик (спиннер)
+   * Show the loader (spinner)
    */
   abstract showLoading(): void
 
   /**
-   * Скрыть загрузчик (спиннер)
+   * Hide the loader (spinner)
    */
   abstract hideLoading(): void
 
   /**
-   * Установить контент (или добавить iframe)
+   * Set content (or add iframe)
    */
   abstract setContent(content: ContentElement): void
 
   /**
-   * Добавить этот лэйаут к элементу
+   * Add this layout to an element
    */
   abstract addToDOM(container: Container): void
 
   /**
-   * Скрыть лэйаут (возможно с анимацией)
+   * Hide the layout (possibly with animation)
    */
   abstract hide(): void
 
   /**
-   * Показать лэйаут
+   * Show the layout
    */
   abstract show(): void
 
   /**
-   * Удалить лэйаут из DOM
+   * Remove the layout from the DOM
    */
   abstract destroy(): void
 }

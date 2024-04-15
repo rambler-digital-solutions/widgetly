@@ -7,7 +7,7 @@ import type {Container, EnterViewportOptions} from './container'
 import {BaseLayout} from './layouts/base-layout'
 
 /**
- * Фасад виджета доступный пользователю
+ * Widget facade available to the user
  */
 export interface ExternalizedWidget extends ExternalizedEmitter {
   params: Record<string, any>
@@ -15,45 +15,45 @@ export interface ExternalizedWidget extends ExternalizedEmitter {
 }
 
 /**
- * Конфигурация виджета
+ * Widget configuration
  */
 export interface WidgetConfig {
-  /** Уникальное название виджета */
+  /** Unique widget name */
   name: string
-  /** Функция инициализации виджета, должна отрисовывать виджет */
+  /** Widget initialization function, should render the widget */
   initialize(this: Widget): void
-  /** Функция удаления виджета, эту функцию должен вызвать пользователь при удалнии виджета */
+  /** Widget deletion function, this function should be called by the user when deleting the widget */
   destroy?(this: Widget): void
   /**
-   * Фабрика, которая экспортирует фасад, доступный пользователю.
-   * По-умолчанию, экспортирует `properties` переданные в виджет и свойства, которые экспортирует iframe
+   * A factory that exports the facade available to the user.
+   * By default, exports `properties` passed to the widget and properties that the iframe exports
    */
   externalize?(this: Widget): Record<string, any>
-  /** Фабрика, которая экспортирует фасад, доступный в iframe */
+  /** A factory that exports the facade available in the iframe */
   externalizeAsProvider?(this: Widget): Record<string, any>
-  /** Функция для замедления обработки изменений Viewport, если он отсутствует, используется стандартный debounce */
+  /** Function to slow down the processing of Viewport changes, if it is absent, the standard debounce is used */
   reduceViewportChange?: Debounce
 }
 
 /**
- * Виджет
+ * Widget
  *
- * @event destroy Событие удаления виджета
+ * @event destroy Widget deletion event
  */
 export class Widget extends EventEmitter {
-  /** Идентификатор виджета */
+  /** Widget identifier */
   public id: string
 
-  /** Название виджета */
+  /** Widget name */
   public name: string
 
-  /** Конфигурация виджета */
+  /** Widget configuration */
   private config: WidgetConfig
 
-  /** Свойства виджета */
+  /** Widget properties */
   private properties: Record<string, any>
 
-  /** Внешние параметры для виджета */
+  /** External parameters for the widget */
   private params: Record<string, any>
 
   private mediator: Mediator
@@ -63,14 +63,14 @@ export class Widget extends EventEmitter {
   private destroyed = false
 
   /**
-   * Создание новой инстанции виджета
+   * Creating a new widget instance
    *
-   * @param mediator Медиатор
-   * @param id Идентификатор виджета
-   * @param config Конфигурация виджета
-   * @param properties Свойства виджета, этот объект копируется как есть в виджет и дополняет его этими свойствами
-   * @param params Некоторые внешние параметры для виджета.
-   * Можно указать объект с любыми свойствами, за исключением зарезервированных (и свойств начинающихся на _):
+   * @param mediator Mediator
+   * @param id Widget identifier
+   * @param config Widget configuration
+   * @param properties Widget properties, this object is copied as is into the widget and supplements it with these properties
+   * @param params Some external parameters for the widget.
+   * You can specify an object with any properties, except for reserved ones (and properties starting with _):
    * - mediator
    * - id
    * - config
@@ -115,6 +115,9 @@ export class Widget extends EventEmitter {
       }
   }
 
+  /**
+   * Widget initialization function
+   */
   public async initialize() {
     await this.config.initialize.call(this)
     this.subscribeEvents()
@@ -127,6 +130,9 @@ export class Widget extends EventEmitter {
     this.iframe?.updateViewport()
   }
 
+  /**
+   * Destroy the widget and stop listening events
+   */
   public destroy = () => {
     if (!this.destroyed) {
       this.destroyed = true
@@ -140,9 +146,9 @@ export class Widget extends EventEmitter {
   }
 
   /**
-   * Создаем айфрейм
+   * Create an iframe
    *
-   * @param url Адрес, где расположен iframe
+   * @param url The URL where the iframe is located
    */
   public createIFrame(url: string) {
     return new IFrameProvider(
@@ -154,14 +160,14 @@ export class Widget extends EventEmitter {
   }
 
   /**
-   * Установка контейнера для виджета
+   * Set a container for the widget
    */
   public addToContainer(container: Container) {
     this.container = container
   }
 
   /**
-   * Фабрика, которая экспортирует фасад, доступный внешнему пользователю
+   * A factory that exports the facade available to the external user
    */
   public externalize() {
     return {
@@ -174,7 +180,7 @@ export class Widget extends EventEmitter {
   }
 
   /**
-   * Фабрика, которая экспортирует фасад, доступный в iframe
+   * A factory that exports the facade available in the iframe
    */
   public externalizeAsProvider() {
     return {
@@ -192,17 +198,17 @@ export class Widget extends EventEmitter {
   }
 
   /**
-   * Ожидание момента, когда контейнер входит во вьюпорт сверху
+   * Wait when the container enters the viewport from the top
    */
   public async whenContainerInViewport(options: EnterViewportOptions) {
     await this.container?.whenEnterViewportFromTop(options)
   }
 
   /**
-   * Подскроллить к определенной части айфрейма
+   * Scroll to a specific part of the iframe
    *
-   * @param top Координата относительно верхнего левого угла айфрейма, к которой нужно подскроллить
-   * @param duration Время анимации скролла, по-умолчанию 200
+   * @param top The coordinate relative to the top-left corner of the iframe to scroll to
+   * @param duration Scroll animation time, default is 200
    */
   private async iFrameScrollTo(top: number, duration = 200) {
     if (this.iframe) {
@@ -212,7 +218,7 @@ export class Widget extends EventEmitter {
   }
 
   /**
-   * Колбек изменения вьюпорта айфрема (айфрем виден или нет)
+   * Callback for iframe viewport change (whether the iframe is visible or not)
    */
   private subscribeVisibleAreaChange(callback: Callback) {
     return this.iframe?.subscribeVisibleAreaChange(callback)

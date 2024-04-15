@@ -70,7 +70,7 @@ mediator.defineWidget({
   // - should render the widget
   async initialize() {
     // Wait until the widget enters the viewport
-    await this.container.whenEnterViewport({lazy: true})
+    await this.whenContainerInViewport({lazy: true})
     // Create an iframe tied to the current widget
     this.iframe = this.createIframe(iframeUrl)
     // Create an embedded layout

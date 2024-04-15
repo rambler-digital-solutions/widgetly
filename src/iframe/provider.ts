@@ -12,10 +12,10 @@ import type {Widget} from '../widget'
 import {Resizer} from './provider-resizer'
 
 /**
- * Обертка над iframe
+ * Wrapper over an iframe
  *
- * @event viewportChange Событие изменение вьюпорта элемента
- * @event destroy Завершение работы провайдера
+ * @event viewportChange Event when the viewport of the element changes
+ * @event destroy Termination of the provider
  */
 export class IFrameProvider extends EventEmitter {
   public id: string
@@ -33,12 +33,12 @@ export class IFrameProvider extends EventEmitter {
   private destroyed = false
 
   /**
-   * Создание новой инстанции провайдера
+   * Creating a new provider instance
    *
-   * @param url URL по которому нужно загрузить iframe
-   * @param widget Объект виджета
-   * @param id Уникальный идентификатор виджета
-   * @param reduceViewportChange Метод создания замедления отслеживания изменения Viewport
+   * @param url URL to load the iframe from
+   * @param widget Widget object
+   * @param id Unique widget identifier
+   * @param reduceViewportChange Method to debounce viewport change tracking
    */
   // eslint-disable-next-line max-params
   public constructor(
@@ -59,10 +59,16 @@ export class IFrameProvider extends EventEmitter {
     this.createElement()
   }
 
+  /**
+   * Get the current iframe element
+   */
   public getElement() {
     return this.element
   }
 
+  /**
+   * Create an iframe element
+   */
   public createElement() {
     this.element = document.createElement('iframe')
     this.element.style.display = 'block !important'
@@ -75,6 +81,9 @@ export class IFrameProvider extends EventEmitter {
     onRemoveFromDOM(this.element, this.destroy)
   }
 
+  /**
+   * Initialization of the iframe provider
+   */
   public async initialize() {
     this.transport = new Provider<any, any>({
       id: this.id,
@@ -96,9 +105,9 @@ export class IFrameProvider extends EventEmitter {
   }
 
   /**
-   * Подписка на изменение видимой области iframe
+   * Subscription to changes in the visible area of the iframe
    *
-   * @param callback Функция обратного вызова
+   * @param callback Callback function
    */
   public subscribeVisibleAreaChange(callback: Callback) {
     this.subscribeViewportChange()
@@ -114,6 +123,9 @@ export class IFrameProvider extends EventEmitter {
     }
   }
 
+  /**
+   * Get the visible area of the iframe
+   */
   public getVisibleArea(): VisibleArea {
     return getVisibleArea(this.element)
   }
@@ -127,21 +139,21 @@ export class IFrameProvider extends EventEmitter {
   }
 
   /**
-   * Обработчик скролла
+   * Scroll event handler
    */
   public updateViewport = () => {
     this.emit('viewportChange')
   }
 
   /**
-   * Пересчитать размеры айфрейма
+   * Recalculate iframe sizes
    */
   public resize() {
     this.resizer?.resize()
   }
 
   /**
-   * Метод вызывается при удалении айфрейма
+   * Method called when removing the iframe
    */
   public destroy = () => {
     if (!this.destroyed) {

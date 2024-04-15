@@ -5,17 +5,17 @@ import {BaseLayout} from './base-layout'
 import css from './embed-layout.css'
 
 /**
- * Конфигурация встроенного лейаута
+ * Embedded layout configuration
  */
 export interface EmbedLayoutConfig {
-  /** HTML-шаблон спиннера */
+  /** Spinner HTML template */
   spinner?: string
 }
 
 /**
- * Встроенный лейаут
+ * Embedded layout
  *
- * @event destroy Закрытие лэйаута
+ * @event destroy Destroy layout
  */
 export class EmbedLayout extends BaseLayout<EmbedLayoutConfig> {
   private spinner: string
@@ -26,9 +26,9 @@ export class EmbedLayout extends BaseLayout<EmbedLayoutConfig> {
   private destroyed = false
 
   /**
-   * Создание нового лейаута
+   * Creating a new layout
    *
-   * @param config Конфигурация лейаута
+   * @param config Layout configuration
    */
   public constructor(config: EmbedLayoutConfig = {}) {
     super(config)
@@ -51,8 +51,8 @@ export class EmbedLayout extends BaseLayout<EmbedLayoutConfig> {
   }
 
   /**
-   * Добавить текущий объект к контейнеру
-   * @param container Контейнер, к которому добавляем текущий элемент
+   * Add current object to container
+   * @param container Container to which the current element is added
    */
   public addToDOM(container: Container) {
     this.container = container
@@ -60,36 +60,36 @@ export class EmbedLayout extends BaseLayout<EmbedLayoutConfig> {
   }
 
   /**
-   * Показать загрузчик
+   * Show loader
    */
   public showLoading() {
     this.toggleLoading(true)
   }
 
   /**
-   * Скрыть загрузчик
+   * Hide loader
    */
   public hideLoading() {
     this.toggleLoading(false)
   }
 
   /**
-   * Скрыть лэйаут
+   * Hide layout
    */
   public hide() {
     toggleClass(this.element, true, css['is-hidden'])
   }
 
   /**
-   * Показать лэйаут
+   * Show layout
    */
   public show() {
     toggleClass(this.element, false, css['is-hidden'])
   }
 
   /**
-   * Показать/скрыть лоадер
-   * @param show Флаг скрытия/показа лоадера
+   * Show/hide loader
+   * @param show Flag to hide/show loader
    */
   public toggleLoading(show: boolean) {
     toggleClass(this.element, show, css['is-loading'])
@@ -97,8 +97,8 @@ export class EmbedLayout extends BaseLayout<EmbedLayoutConfig> {
   }
 
   /**
-   * Установить контент в лэйауте
-   * @param content Контент лэйаута
+   * Set content in the layout
+   * @param content Layout content
    */
   public setContent(content: ContentElement) {
     this.content = content
@@ -106,8 +106,7 @@ export class EmbedLayout extends BaseLayout<EmbedLayoutConfig> {
   }
 
   /**
-   * Удаление элемента из DOM.
-   * В этот момент происходит отписка от событий
+   * Remove element from DOM
    */
   public destroy = () => {
     if (!this.destroyed) {

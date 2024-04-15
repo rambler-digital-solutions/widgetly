@@ -1,3 +1,6 @@
+/**
+ * Content element
+ */
 export abstract class ContentElement {
   protected abstract element: HTMLElement
 

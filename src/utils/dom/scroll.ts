@@ -1,5 +1,5 @@
 /**
- * Установить новое значения скролла для элемента
+ * Set a new scroll value for an element
  */
 function setScroll(element: HTMLElement, value: number) {
   if (element === document.body || element === document.documentElement) {
@@ -10,7 +10,7 @@ function setScroll(element: HTMLElement, value: number) {
 }
 
 /**
- * Получить текущий скролл элемента
+ * Get the current scroll of an element
  */
 export function getScroll(element: HTMLElement) {
   if (element === document.body || element === document.documentElement) {

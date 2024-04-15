@@ -7,9 +7,9 @@ function isOverflowed(overflow: string) {
 }
 
 interface CalculateOptions {
-  /** Отступ, при пересечении которого считаем что элемент виден, по-умолчанию 0 */
+  /** Margin to consider the element visible by default is 0 */
   offset?: number
-  /** Флаг указывающий на то, что если вьюпорт ниже элемента, то мы считаем элемент видимым, по-умолчанию false */
+  /** Flag indicating that if the viewport is below the element, then we consider the element visible, default false */
   compliantScrollDown?: boolean
 }
 
@@ -32,11 +32,11 @@ interface CalculateBox {
 }
 
 /**
- * Вычисляет область элемента, которая попадает в экран. Возвращает вычесленный бокс.
+ * Calculates the area of the element that is visible on screen. Returns the calculated box.
  *
- * @param element DOM-элемент, для которого считаем пересечение
- * @param options Опции
- * @param calculateOverflowed Посчитать css свойства overflow
+ * @param element DOM element for which to calculate the intersection
+ * @param options Options
+ * @param calculateOverflowed Calculate css overflow properties
  */
 function calculateBox(
   element: HTMLElement,
@@ -103,10 +103,10 @@ function calculateBox(
 }
 
 /**
- * Вычисляет пересечение дочернего бокса с родительским. Возвращает результирующий дочерний бокс.
+ * Calculates the intersection of a child box with a parent box. Returns the resulting child box.
  *
- * @param childBox Дочерний бокс
- * @param parentBox Родительский бокс
+ * @param childBox Child box
+ * @param parentBox Parent box
  */
 function calculateResultChildBox(
   childBox: CalculateBox,
@@ -151,29 +151,30 @@ function calculateResultChildBox(
   }
 }
 
+/** Visible area */
 export interface VisibleArea {
-  /** Координаты относительно легово верхнего угла элемента, начиная с которых он виден */
+  /** Coordinates relative to the top left corner of the element from which it is visible */
   top: number
-  /** Координаты относительно легово верхнего угла элемента, начиная с которых он виден */
+  /** Coordinates relative to the top left corner of the element from which it is visible */
   left: number
-  /** Видимая ширина элемента */
+  /** Visible width of the element */
   width: number
-  /** Видимая высота элемента */
+  /** Visible height of the element */
   height: number
 }
 
 interface VisibleOptions {
-  /** Определяет виден ли элемент на экране */
+  /** Determines if the element is visible on screen */
   isVisible: boolean
-  /** Видимая область DOM-элемента */
+  /** Visible area of the DOM element */
   area: VisibleArea
 }
 
 /**
- * Определяет видимые части элемента.
+ * Determines the visible parts of the element.
  *
- * @param element DOM-элемент
- * @param options Опции
+ * @param element DOM element
+ * @param options Options
  */
 function calculateVisibleOptions(
   element: HTMLElement,

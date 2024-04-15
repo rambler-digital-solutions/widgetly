@@ -2,18 +2,21 @@ import {Consumer} from 'magic-transport'
 import {IFrameResizer} from './consumer-resizer'
 
 /**
- * Конфигурация консъюмера внутри iframe
+ * Configuration of the consumer inside an iframe
  */
 export interface IFrameConsumerConfig {
-  /** Функция инициализации виджета, должна отрисовывать приложение */
+  /** Widget initialization function, should render the application */
   initialize(): void
-  /** Фабрика, которая экспортирует фасад, доступный снаружи виджета пользователю */
+  /** Factory that exports a facade available externally to the widget user */
   externalize?(): void
-  /** Фабрика, которая экспортирует фасад, доступный виджету */
+  /** Factory that exports a facade available to the widget */
   externalizeAsConsumer?(): void
 }
 
-class IFrameConsumer {
+/**
+ * Consumer inside an iframe
+ */
+export class IFrameConsumer {
   public id: string
   public resizer: IFrameResizer
   public transport: Consumer<any, any>
@@ -28,10 +31,10 @@ class IFrameConsumer {
   private parentOrigin?: string
 
   /**
-   * Конструктор
+   * Constructor
    *
-   * @param config Конфиг
-   * @param properties Общие свойства
+   * @param config Configuration
+   * @param properties Additional properties
    */
   public constructor(
     config: IFrameConsumerConfig,
@@ -77,18 +80,18 @@ class IFrameConsumer {
   }
 
   /**
-   * Фабрика, которая экспортирует фасад, доступный снаружи виджета (вебмастеру)
+   * Factory that exports a facade available externally to the widget (for the webmaster)
    */
   externalize() {
     return this.config.externalize?.call(this) ?? this.properties
   }
 
   /**
-   * Фабрика, которая экспортирует фасад, доступный виджету
+   * Factory that exports a facade available to the widget
    */
   externalizeAsConsumer() {
     return {
-      // Эту функцию должен вызывать provider для инициализации
+      // This function should be called by the provider for initialization
       initialize: this.config.initialize.bind(this),
       externalizedProps: this.externalize(),
       getSize: () => this.resizer.getSize(),
@@ -100,10 +103,10 @@ class IFrameConsumer {
 }
 
 /**
- * Регистрация айфрейма
+ * Iframe registration
  *
- * @param config Конфиг
- * @param properties Общие свойства
+ * @param config Configuration
+ * @param properties Additional properties
  */
 export function registerIFrame(
   config: IFrameConsumerConfig,

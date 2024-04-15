@@ -11,7 +11,7 @@ let mutationEventsParams: MutationObserverInit = {
 let observing = false
 
 /**
- * Создаем mutationObserver
+ * Create a MutationObserver
  */
 export const mutationEvents = new EventEmitter()
 const mutationObserver = new MutationObserver((event) => {
@@ -19,7 +19,7 @@ const mutationObserver = new MutationObserver((event) => {
 })
 
 /**
- * Выставляем параметры для mutationObserver
+ * Set parameters for mutationObserver
  */
 export function setMutationParams(params: MutationObserverInit) {
   mutationEventsParams = params
@@ -30,7 +30,7 @@ export function setMutationParams(params: MutationObserverInit) {
 }
 
 /**
- * Начать смотреть за DOM
+ * Start observing the DOM
  */
 function initObserve() {
   if (observing) {
@@ -44,7 +44,7 @@ function initObserve() {
 }
 
 /**
- * Следим за scroll окно
+ * Monitor scroll window
  */
 export const globalViewportEvents = new EventEmitter()
 
@@ -55,16 +55,19 @@ const onViewportChangeHandler = (event: Event) => {
 window.addEventListener('scroll', onViewportChangeHandler)
 window.addEventListener('resize', onViewportChangeHandler)
 
+/**
+ * Base viewport manager
+ */
 export interface ViewportManager {
   destroy(): void
 }
 
 /**
- * Создает менеджер, который следит за изменением viewport элемента
+ * Creates a manager that monitors changes to the viewport of an element
  *
- * @param element Элемент
- * @param callback Колбек изменения вьюпорта
- * @param duration Функция замедления вызова колбека или время задержки вызова коллбека, по-умолчанию 200
+ * @param element An element
+ * @param callback A viewport change callback
+ * @param duration Function to debounce a callback or callback delay duration, default is 200
  */
 export function createViewportManager(
   element: HTMLElement,
@@ -105,10 +108,10 @@ export function createViewportManager(
 }
 
 /**
- * Обработчик удаления элемента из DOM
+ * Handler for removing an element from the DOM
  *
- * @param element DOM-элемент, который отслеживаем
- * @param callback Функция-обработчик
+ * @param element DOM element being watched
+ * @param callback Handler function
  */
 export function onRemoveFromDOM(element: HTMLElement, callback: Callback) {
   let prevElementInDom = isElementInDOM(element)
@@ -128,18 +131,18 @@ export function onRemoveFromDOM(element: HTMLElement, callback: Callback) {
 }
 
 /**
- * Удаляет элемент из DOM, если он есть в DOM
+ * Remove an element from the DOM if it exists in the DOM
  *
- * @param element DOM-элемент
+ * @param element DOM element
  */
 export function removeFromDOM(element: HTMLElement) {
   element.parentNode?.removeChild(element)
 }
 
 /**
- * Проверяет, находится ли элемент в DOM
+ * Checks if an element is in the DOM
  *
- * @param element DOM-элемент
+ * @param element DOM element
  */
 function isElementInDOM(element: HTMLElement) {
   return document.body.contains(element)
@@ -148,10 +151,10 @@ function isElementInDOM(element: HTMLElement) {
 type ClassName = string | null | false | undefined
 
 /**
- * Выставить класс элементу
+ * Set classes for an element
  *
- * @param element DOM элемент
- * @param classNames CSS-классы
+ * @param element DOM element
+ * @param classNames CSS classes
  */
 export function setClass(element: HTMLElement, ...classNames: ClassName[]) {
   if (element) {
@@ -160,37 +163,37 @@ export function setClass(element: HTMLElement, ...classNames: ClassName[]) {
 }
 
 /**
- * Добавить класс элементу
+ * Add classes to an element
  *
- * @param element DOM элемент
- * @param classNames CSS-классы
+ * @param element DOM element
+ * @param classNames CSS classes
  */
 function addClass(element?: HTMLElement, ...classNames: ClassName[]) {
   element?.classList.add(...(classNames.filter(Boolean) as string[]))
 }
 
 /**
- * Удалить класс у элемента
+ * Remove classes from an element
  *
- * @param element DOM элемент
- * @param classNames CSS-классы
+ * @param element DOM element
+ * @param classNames CSS classes
  */
 function removeClass(element?: HTMLElement, ...classNames: ClassName[]) {
   element?.classList.remove(...(classNames.filter(Boolean) as string[]))
 }
 
 /**
- * Добавить/удалить классы у элемента
+ * Toggle classes on an element
  *
- * @param element DOM элемент
- * @param add Флаг, указывающий добавить или удалить класс
- * @param classNames CSS-классы для добавления/удаления
+ * @param element DOM element
+ * @param add Flag to add or remove the class
+ * @param classNames CSS classes to toggle
  *
  * ```ts
- * // добавить класс 'my-class'
+ * // add class 'my-class'
  * toggleClass(element, true, 'my-class')
  *
- * // удалить классы 'my-class', 'other-class'
+ * // remove class 'my-class', 'other-class'
  * toggleClass(element, false, 'my-class', 'other-class')
  * ```
  */
@@ -207,10 +210,10 @@ export function toggleClass(
 }
 
 /**
- * Найти DOM-элемент по его id
+ * Find DOM element by its id
  *
- * @param  id ID искомого элемента
- * @param  parent Элемент, внутри которого нужно искать
+ * @param id The id of the element to find
+ * @param parent The element within which to search
  */
 export function findById(id: string, parent?: HTMLElement) {
   if (!parent) {
@@ -221,11 +224,11 @@ export function findById(id: string, parent?: HTMLElement) {
 }
 
 /**
- * Подскроллить к позиции относительно верхнего левого угла элемента
+ * Scroll to a position relative to top left corner of the element
  *
- * @param element DOM-элемент
- * @param top Отступ сверху относительно верхнего левого угла элемента
- * @param duration Время анимации
+ * @param element DOM element
+ * @param top Top offset relative to top left corner of the element
+ * @param duration Animation time
  */
 export function scrollByElementTo(
   element: HTMLElement,
