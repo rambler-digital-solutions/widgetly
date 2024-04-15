@@ -14,6 +14,8 @@ export interface EmbedLayoutConfig {
 
 /**
  * Встроенный виджет
+ *
+ * @event destroy Закрытие лэйаута
  */
 export class EmbedLayout extends BaseLayout<EmbedLayoutConfig> {
   private spinner: string
@@ -27,8 +29,6 @@ export class EmbedLayout extends BaseLayout<EmbedLayoutConfig> {
    * Создание новой инстанции виджета
    *
    * @param config Конфигурация виджета
-   *
-   * @event destroy Закрытие виджета
    */
   public constructor(config: EmbedLayoutConfig = {}) {
     super(config)

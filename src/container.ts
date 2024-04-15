@@ -28,6 +28,7 @@ export class Container extends EventEmitter {
 
   /**
    * Конструктор контейнера
+   *
    * @param element DOM-элемент контейнера
    * @param reduceViewportChange Функция замедления обработки изменений
    */

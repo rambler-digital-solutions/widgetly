@@ -27,6 +27,8 @@ export interface OverlayLayoutConfig {
 
 /**
  * Виджет открываемый в модальном окне
+ *
+ * @event destroy Закрытие лэйаута
  */
 export class OverlayLayout extends BaseLayout<OverlayLayoutConfig> {
   private spinner: string
@@ -41,8 +43,6 @@ export class OverlayLayout extends BaseLayout<OverlayLayoutConfig> {
    * Создание новой инстанции виджета
    *
    * @param config Конфигурация виджета
-   *
-   * @event destroy Завершение работы виджета
    */
   public constructor(config: OverlayLayoutConfig = {}) {
     super(config)

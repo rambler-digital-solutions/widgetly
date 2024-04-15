@@ -20,11 +20,14 @@ export interface ExternalizedWidget extends ExternalizedEmitter {
 export interface WidgetConfig {
   /** Уникальное название виджета */
   name: string
-  /** Функция инициализации виджета. Должна отрисовывать виджет */
+  /** Функция инициализации виджета */
   initialize(this: Widget): void
   /** Функция удаления виджета, эту функцию должен вызвать пользователь при удалнии виджета */
   destroy?(this: Widget): void
-  /** Фабрика, которая экспортирует фасад, доступный пользователю */
+  /**
+   * Фабрика, которая экспортирует фасад, доступный пользователю.
+   * По-умолчанию, экспортирует `properties` переданные в виджет и свойства, которые экспортирует iframe
+   */
   externalize?(this: Widget): Record<string, any>
   /** Фабрика, которая экспортирует фасад, доступный в iframe */
   externalizeAsProvider?(this: Widget): Record<string, any>

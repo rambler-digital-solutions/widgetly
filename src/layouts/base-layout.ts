@@ -5,11 +5,13 @@ import type {Container} from '../container'
 import type {ContentElement} from './content-element'
 
 /**
- * Класс с базовым layout
+ * Базовый лэйаут
+ *
+ * @event destroy Закрытие лэйаута
  */
 export abstract class BaseLayout<T = any> extends EventEmitter {
   public id: string
-  protected element: HTMLElement
+  public element: HTMLElement
   protected config: T
   protected container?: Container | HTMLElement
   protected content?: ContentElement

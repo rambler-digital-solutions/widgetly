@@ -13,6 +13,9 @@ import {Resizer} from './provider-resizer'
 
 /**
  * Обертка над iframe
+ *
+ * @event viewportChange Событие изменение вьюпорта элемента
+ * @event destroy Завершение работы провайдера
  */
 export class IFrameProvider extends EventEmitter {
   public id: string
@@ -36,9 +39,6 @@ export class IFrameProvider extends EventEmitter {
    * @param widget Объект виджета
    * @param id Уникальный идентификатор виджета
    * @param reduceViewportChange Метод создания замедления отслеживания изменения Viewport
-   *
-   * @event viewportChange Событие изменение вьюпорта элемента
-   * @event destroy Завершение работы провайдера
    */
   // eslint-disable-next-line max-params
   public constructor(

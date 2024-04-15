@@ -1,22 +1,38 @@
 # Widgetly
 
-Widgetly предназначен для создания виджетов, включая те, которые работают через iframe.
+Library helps you to create widgets, including widgets that work via an iframe.
 
-- Переиспользуемые виджеты: Widgetly позволяет вынести часть бизнес-логики в универсальный виджет, который затем можно легко переиспользовать в различных сервисах. Один виджет может быть интегрирован в множество сервисов без необходимости изменения его кода.
-- API: Можно создать внешний интерфейс для взаимодействия с виджетом, предоставляя разработчикам методы для управления виджетом, получения данных от него и отправки данных в виджет.
-- Транспорт: Имеет встроенный механизм проброса данных и методов между сервисом, виджетом и iframe, без использования postMessage.
-- Независимость от фреймворков: Разработчики могут использовать любые библиотеки и фреймворки для создания виджетов и сервисов, куда встраивается виджет, что увеличивает гибкость и скорость разработки.
+## Main goals
 
-## Mediator
+- Reusable Widgets: Extract some business logic into a universal widget, which can then be easily reused across various applications. A single widget can be integrated into numerous applications without the need to change its code.
+- API: Create an external interface for interacting with the widget, that provides for developers methods to control the widget, receive data from it, and send data to the widget.
+- Transport: Use built-in mechanism for sync data and methods between the application, widget, and iframe, without using `postMessage` directly.
+- Framework agnostic: Use any libraries and frameworks to create widgets and applications that embed them, increasing flexibility and development speed.
 
-Медиатор - это инстанция фабрики `widgetly`, после создания инстанции, можно декларировать виджеты. Если вы используете iframe-виджеты, то этот код нужно размещать в родительском окне.
+## Install
 
-```js
-// ./mediator.js
-import widgetly from 'widgetly'
+```sh
+npm install widgetly
+```
 
-export const mediator = widgetly({
-  // префикс для data-атрибутов при вставке виджетов через HTML-код
+or
+
+```sh
+yarn add widgetly
+```
+
+## Usage
+
+### Mediator
+
+The Mediator is an instance of the widget factory. After creating an instance, you can declare widgets. If you are using iframe widgets, place this code in the parent window.
+
+```ts
+// ./mediator.ts
+import {createMediator} from 'widgetly'
+
+export const mediator = createMediator({
+  // Prefix for data attributes when inserting widgets via HTML code
   prefix: 'rc'
 }, {
   myMethod() {
@@ -30,59 +46,46 @@ export const mediator = widgetly({
 })
 ```
 
-## Декларация виджетов
+### Widget declaration
 
-После декларации медиатора, можно начать декларировать виджеты. Виджет декларируется через фабрику, которая имеет следующий интерфейс (поля, отмеченные `*` - обязательны):
+After creating the mediator, you can start declaring widgets via the factory.
 
 ```js
 mediator.defineWidget(config, properties)
 ```
 
-| Название параметра | Тип | Описание |
-|---|---|---|
-| `config` | `Object*` | Конфиг виджета |
-| `config.name` | `String*` | Название виджета |
-| `config.initialize` | `Function*` | Функция инициализации виджета. Должна возвращать `Promise` |
-| `config.destroy` | `Function` | Функции уничтожения виджета |
-| `config.externalizeAsProvider` | `Function` | Функция должна экспортировать объект с методами, доступными для `this.iframe` |
-| `config.externalize` | `Function` | Функция должна экспортировать объект с методами, доступными внешнему потребителю, по умолчанию экспортирует все `properties` (см. ниже) и свойства, которые экспортировал `this.iframe`, если он есть |
-| properties | `Object` | Дополнительные свойства виджета |
+#### Embedded widget
 
-### Пример встроенного виджета
-
-```js
-// ./widget.js
-import {mediator} from './mediator'
-// импортируем лэйаут встроенного виджета
+```ts
+// ./widget.ts
 import {EmbedLayout} from 'widgetly'
+import {mediator} from './mediator'
 
-// декларируем виджет
 mediator.defineWidget({
-  // название виджета 
+  // Widget name
   name: 'EmbedComments',
 
-  // функция инициализации виджета
-  // этот метод должен возвращать Promise
-  // в этом методе должен отрисовывать виджет
-  initialize() {
-    // Доступные свойства на момент инициализации:
-    // this.params - параметры создания виджета
-    // this.container - контейнер виджета
-    // this.createIframe(url) - создать айфрейм, привязанный к текущему виджету
-    
-    return this.container.whenEnterViewport({ lazy: true }).then(() => {
-      this.iframe = this.createIframe(iframeUrl)
-      this.layout = new EmbedLayout({
-        spinner: '<div class="Spinner" />'
-      })
-      this.layout.showLoading()
-      this.layout.addToDOM(this.container)
-      this.layout.setContent(this.iframe)
-      return this.iframe.initialize().then(() => this.layout.hideLoading())
+  // Widget initialization function
+  // - should return a Promise
+  // - should render the widget
+  async initialize() {
+    // Wait until the widget enters the viewport
+    await this.container.whenEnterViewport({ lazy: true })
+    // Create an iframe tied to the current widget
+    this.iframe = this.createIframe(iframeUrl)
+    // Create an embedded layout
+    this.layout = new EmbedLayout({
+      spinner: '<div class="Spinner" />'
     })
+    this.layout.showLoading()
+    this.layout.addToDOM(this.container)
+    this.layout.setContent(this.iframe)
+    // Wait until the widget renders in iframe
+    await this.iframe.initialize()
+    this.layout.hideLoading()
   }
 }, {
-  // Все методы, объявленные здесь, обоготят this
+  // All methods declared here will enrich widget
   hide() {
     this.layout.hide()
   },
@@ -93,38 +96,35 @@ mediator.defineWidget({
 })
 ```
 
-### Пример виджета открываемого в модальном окне
+#### Overlay widget
 
-```js
-// ./widget.js
-import {mediator} from './mediator'
-// импортируем лэйаут встроенного виджета
+```ts
+// ./widget.ts
 import {OverlayLayout} from 'widgetly'
+import {mediator} from './mediator'
 
-// декларируем виджет
 mediator.defineWidget({
-  // название виджета 
+  // Widget name
   name: 'LoginModal',
 
-  // функция инициализации виджета
-  // этот метод должен возвращать Promise
-  // в этом методе должен отрисовывать виджет
-  initialize() {
-    // Доступные свойства на момент инициализации:
-    // this.params - параметры создания виджета
-    // this.container - контейнер виджета
-    // this.createIframe(url) - создать айфрейм, привязанный к текущему виджету
-    
+  // Widget initialization function
+  // - should return a Promise
+  // - should render the widget
+  async initialize() {
+    // Create an iframe tied to the current widget
     this.iframe = this.createIframe(iframeUrl)
+    // Create an overlay layout
     this.layout = new OverlayLayout({ hidden: true })
     this.layout.setContainer(this.container)
     this.layout.setContent(this.iframe)
-    return this.iframe.initialize().then(() => this.layout.show())
+    // Wait until the widget renders in iframe
+    await this.iframe.initialize()
+    this.layout.show()
   }
 })
 ```
 
-## Лэйаут
+### Лэйаут
 
 Лэйаут представляет собой элемент, в который вставляется iframe и лоадер.
 
@@ -152,7 +152,7 @@ mediator.defineWidget({
 | `events` | EventEmitter лэйаута. Должен кидать следующие события: `destroy` |
 | `element` | Рутовый элемент лэйаута |
 
-## IFrame
+### IFrame
 
 Внутри айфрейма нужно обернуть инициализацию вашего виджета:
 
@@ -168,7 +168,7 @@ registerIFrame(config, properties)
 | `config.externalize` | `Function` | Этот метод должен возвращать фасад с методами, которые видны снаружи виджета |
 | `properties` | `Object` | Дополнительные свойства |
 
-### Пример инициализации
+#### Пример инициализации
 
 ```js
 // ./app.js
@@ -213,7 +213,7 @@ registerIFrame({
 })
 ```
 
-## Использование виджетов
+### Использование виджетов
 
 Медиатор может создавать виджеты автоматически в контейнеры с соответствующими data атрибутами при появлении его в DOM.
 
@@ -245,7 +245,7 @@ mediator.buildWidget(name, containerElement, params)
 | `containerElement` | `HTMLElement|String*` | Элемент/селектор, в которой будет вставлен виджет |
 | `params` | `Object*` | Параметры инициализации виджета |
 
-### Пример создания виджета
+#### Пример создания виджета
 
 ```js
 // ./app.js
@@ -261,6 +261,60 @@ mediator.buildWidget('EmbedComments', container, {
 });
 ```
 
-## Лицензия
+## Documentation
+
+Currently we only have the API which you can check [here](https://rambler-digital-solutions.github.io/widgetly/).
+
+## Contributing
+
+### Start
+
+After you clone the repo you just need to run [`yarn`](https://yarnpkg.com/lang/en/docs/cli/#toc-default-command)'s default command to install and build the packages
+
+```
+yarn
+```
+
+### Testing
+
+We have a test suite consisting of a bunch of unit tests to verify utils keep working as expected. Test suit is run in CI on every commit.
+
+To run the tests
+
+```
+yarn test
+```
+
+To run the tests in watch mode
+
+```sh
+yarn test:watch
+```
+
+### Code quality
+
+To run linting the codebase
+
+```sh
+yarn lint
+```
+
+To check typings
+
+```sh
+yarn typecheck
+```
+
+To check bundle size
+
+```sh
+yarn sizecheck
+```
+
+## Discussion
+
+Please open an issue if you have any questions or concerns.
+
+## License
 
 MIT

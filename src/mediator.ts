@@ -116,7 +116,7 @@ export class Mediator extends EventEmitter {
    * Определяем виджет
    *
    * @param config Конфиг виджета
-   * @param properties Свойства виджета, этот объект копируется как есть в виджет и дополняет его этими свойствами
+   * @param properties Дополнительные свойства виджета, этот объект копируется в виджет как есть и дополняет его этими свойствами
    */
   public defineWidget(
     config: WidgetConfig,
