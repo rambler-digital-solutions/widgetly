@@ -22,6 +22,11 @@ export type {
   ContainerElement,
   EnterViewportOptions
 } from './container'
-export type {Widget, WidgetConfig, ExternalizedWidget} from './widget'
+export type {Widget, WidgetConfig, WidgetAPI} from './widget'
 export type {Debounce, Callback} from './types'
-export {createMediator, Mediator, type MediatorConfig} from './mediator'
+export {
+  createMediator,
+  Mediator,
+  type MediatorConfig,
+  type MediatorAPI
+} from './mediator'

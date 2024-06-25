@@ -1,9 +1,9 @@
 import domready from 'domready'
 import {randomId} from './utils/random-id'
 import {mutationEvents} from './utils/dom'
-import {EventEmitter} from './utils/event-emitter'
+import {EventEmitter, type EventEmitterAPI} from './utils/event-emitter'
 import {Container} from './container'
-import {Widget, type WidgetConfig, type ExternalizedWidget} from './widget'
+import {Widget, type WidgetConfig, type WidgetAPI} from './widget'
 
 /**
  * Mediator configuration
@@ -12,9 +12,22 @@ export interface MediatorConfig {
   /** Prefix for data-attributes */
   prefix: string
   /** Initialization function */
-  initialize(): void
+  initialize?(this: Mediator): void
   /** Factory that exports a facade available in an iframe */
   externalizeAsProvider?(this: Mediator): Record<string, any>
+}
+
+/**
+ * Mediator facade available to the widget and inside an iframe
+ */
+export interface MediatorAPI extends EventEmitterAPI, Record<string, any> {
+  buildWidget(
+    name: string,
+    containerElement: HTMLElement | string,
+    params?: Record<string, any>
+  ): Promise<WidgetAPI>
+  buildWidget(name: string, params?: Record<string, any>): Promise<WidgetAPI>
+  initializeDOMElements(): void
 }
 
 /**
@@ -154,7 +167,7 @@ export class Mediator extends EventEmitter {
     name: string,
     containerElement: HTMLElement | string,
     params?: Record<string, any>
-  ): Promise<ExternalizedWidget>
+  ): Promise<WidgetAPI>
 
   /**
    * Create a widget and place it on the page
@@ -165,13 +178,13 @@ export class Mediator extends EventEmitter {
   public buildWidget(
     name: string,
     params?: Record<string, any>
-  ): Promise<ExternalizedWidget>
+  ): Promise<WidgetAPI>
 
   public buildWidget(
     name: string,
     containerElement?: HTMLElement | string | Record<string, any>,
     params?: Record<string, any>
-  ): Promise<ExternalizedWidget> {
+  ): Promise<WidgetAPI> {
     if (!this.widgets[name]) {
       throw new Error(`Widget '${name}' does not exists`)
     }
