@@ -1,4 +1,7 @@
+import type BaseEventEmitter from 'events'
 import {Consumer} from 'magic-transport'
+import type {Size, Promisify} from '../types'
+import type {IFrameProviderAPI} from './provider'
 import {IFrameResizer} from './consumer-resizer'
 
 /**
@@ -6,11 +9,22 @@ import {IFrameResizer} from './consumer-resizer'
  */
 export interface IFrameConsumerConfig {
   /** Widget initialization function, should render the application */
-  initialize(): void
+  initialize(this: IFrameConsumer): void
   /** Factory that exports a facade available externally to the widget user */
-  externalize?(): void
+  externalize?(this: IFrameConsumer): void
   /** Factory that exports a facade available to the widget */
-  externalizeAsConsumer?(): void
+  externalizeAsConsumer?(this: IFrameConsumer): void
+}
+
+/**
+ * Consumer facade available to the widget
+ */
+export interface IFrameConsumerAPI extends Record<string, any> {
+  initialize(this: IFrameConsumer): void
+  externalizedProps: Record<string, any>
+  getSize(): Size
+  watchSize(): void
+  resize(): void
 }
 
 /**
@@ -19,9 +33,9 @@ export interface IFrameConsumerConfig {
 export class IFrameConsumer {
   public id: string
   public resizer: IFrameResizer
-  public transport: Consumer<any, any>
-  public consumer: Record<string, any>
-  public provider?: Record<string, any>
+  public transport: Consumer<IFrameProviderAPI, IFrameConsumerAPI>
+  public consumer: BaseEventEmitter & IFrameConsumerAPI
+  public provider!: Promisify<BaseEventEmitter & IFrameProviderAPI>
 
   private config: IFrameConsumerConfig
   private properties: Record<string, any>
@@ -38,7 +52,7 @@ export class IFrameConsumer {
    */
   public constructor(
     config: IFrameConsumerConfig,
-    properties: Record<string, any>
+    properties?: Record<string, any>
   ) {
     this.id = this.parseId()
     this.config = config
@@ -56,7 +70,7 @@ export class IFrameConsumer {
         }
       }
 
-    this.transport = new Consumer({
+    this.transport = new Consumer<IFrameProviderAPI, IFrameConsumerAPI>({
       id: this.id,
       parentOrigin: '*',
       ...this.externalizeAsConsumer()
@@ -110,7 +124,7 @@ export class IFrameConsumer {
  */
 export function registerIFrame(
   config: IFrameConsumerConfig,
-  properties: Record<string, any>
+  properties?: Record<string, any>
 ) {
   return new IFrameConsumer(config, properties)
 }

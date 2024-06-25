@@ -1,11 +1,11 @@
 import BaseEventEmitter from 'events'
 
-interface ExternalizeEmitterParams {
+interface EventEmitterAPIParams {
   withEmit?: boolean
 }
 
-export type ExternalizedEmitter = Pick<
-  EventEmitter,
+export type EventEmitterAPI = Pick<
+  BaseEventEmitter,
   'on' | 'once' | 'removeListener' | 'emit'
 >
 
@@ -16,8 +16,8 @@ export class EventEmitter extends BaseEventEmitter {
   }
 
   public externalizeEmitter(
-    params: ExternalizeEmitterParams = {}
-  ): ExternalizedEmitter {
+    params: EventEmitterAPIParams = {}
+  ): EventEmitterAPI {
     const methods: (keyof EventEmitter)[] = ['on', 'once', 'removeListener']
 
     if (params.withEmit) {

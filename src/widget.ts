@@ -1,17 +1,34 @@
 import {IFrameProvider} from './iframe/provider'
-import {EventEmitter, type ExternalizedEmitter} from './utils/event-emitter'
+import {EventEmitter, type EventEmitterAPI} from './utils/event-emitter'
 import {scrollByElementTo} from './utils/dom'
+import {VisibleArea} from './utils/dom/viewport'
 import type {Debounce, Callback} from './types'
-import type {Mediator} from './mediator'
+import type {Mediator, MediatorAPI} from './mediator'
 import type {Container, EnterViewportOptions} from './container'
 import {BaseLayout} from './layouts/base-layout'
 
 /**
  * Widget facade available to the user
  */
-export interface ExternalizedWidget extends ExternalizedEmitter {
+export interface WidgetAPI extends EventEmitterAPI, Record<string, any> {
   params: Record<string, any>
   destroy(): void
+}
+
+/**
+ * Widget facade available in the iframe
+ */
+export interface WidgetProviderAPI
+  extends EventEmitterAPI,
+    Record<string, any> {
+  url: string
+  mediator: MediatorAPI
+  params: Record<string, any>
+  destroy(): void
+  subscribeVisibleAreaChange(callback: Callback): void
+  getVisibleArea(): VisibleArea
+  scrollTo(top: number, duration: number): void
+  resize(): void
 }
 
 /**
@@ -48,18 +65,18 @@ export class Widget extends EventEmitter {
   public name: string
 
   /** Widget configuration */
-  private config: WidgetConfig
+  public config: WidgetConfig
 
   /** Widget properties */
-  private properties: Record<string, any>
+  public properties: Record<string, any>
 
   /** External parameters for the widget */
-  private params: Record<string, any>
+  public params: Record<string, any>
 
-  private mediator: Mediator
-  private layout?: BaseLayout
-  private container?: Container
-  private iframe?: IFrameProvider
+  public mediator: Mediator
+  public layout?: BaseLayout
+  public container!: Container
+  public iframe?: IFrameProvider
   private destroyed = false
 
   /**
@@ -236,7 +253,7 @@ export class Widget extends EventEmitter {
     this.container?.removeListener('destroy', this.destroy)
   }
 
-  private getIFrameVisibleArea() {
-    return this.iframe?.getVisibleArea()
+  private getIFrameVisibleArea(): VisibleArea {
+    return this.iframe?.getVisibleArea() as VisibleArea
   }
 }

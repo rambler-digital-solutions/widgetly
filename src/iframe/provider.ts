@@ -1,3 +1,4 @@
+import type BaseEventEmitter from 'events'
 import {Provider} from 'magic-transport'
 import {
   removeFromDOM,
@@ -7,9 +8,19 @@ import {
 } from '../utils/dom'
 import {getVisibleArea, type VisibleArea} from '../utils/dom/viewport'
 import {EventEmitter} from '../utils/event-emitter'
-import type {Callback, Debounce, Size} from '../types'
-import type {Widget} from '../widget'
+import type {ContentElement} from '../layouts/content-element'
+import type {Callback, Debounce, Size, Promisify} from '../types'
+import type {Widget, WidgetProviderAPI} from '../widget'
+import type {IFrameConsumerAPI} from './consumer'
 import {Resizer} from './provider-resizer'
+
+/**
+ * Provider facade available in the iframe
+ */
+export interface IFrameProviderAPI extends WidgetProviderAPI {
+  resize(): void
+  setSize(size: Size): void
+}
 
 /**
  * Wrapper over an iframe
@@ -17,15 +28,15 @@ import {Resizer} from './provider-resizer'
  * @event viewportChange Event when the viewport of the element changes
  * @event destroy Termination of the provider
  */
-export class IFrameProvider extends EventEmitter {
+export class IFrameProvider extends EventEmitter implements ContentElement {
   public id: string
   public url: string
   public resizer?: Resizer
-  public transport?: Provider<any, any>
-  public consumer?: Record<string, any>
-  public provider?: Record<string, any>
+  public transport?: Provider<IFrameProviderAPI, IFrameConsumerAPI>
+  public consumer?: Promisify<BaseEventEmitter & IFrameConsumerAPI>
+  public provider?: BaseEventEmitter & IFrameProviderAPI
+  public element!: HTMLIFrameElement
 
-  private element!: HTMLIFrameElement
   private widget: Widget
   private viewportManager?: ViewportManager
   private consumerOrigin: string
@@ -85,7 +96,7 @@ export class IFrameProvider extends EventEmitter {
    * Initialization of the iframe provider
    */
   public async initialize() {
-    this.transport = new Provider<any, any>({
+    this.transport = new Provider<IFrameProviderAPI, IFrameConsumerAPI>({
       id: this.id,
       childOrigin: this.consumerOrigin,
       ...this.widget.externalizeAsProvider(),
