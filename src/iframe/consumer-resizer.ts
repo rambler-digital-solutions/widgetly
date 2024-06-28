@@ -4,13 +4,6 @@ import {mutationEvents, setMutationParams} from '../utils/dom'
 import {EventEmitter} from '../utils/event-emitter'
 import type {Size} from '../types'
 
-setMutationParams({
-  attributes: true,
-  childList: true,
-  subtree: true,
-  characterData: true
-})
-
 export class IFrameResizer {
   private events: EventEmitter
   private transport: Consumer<any, any>
@@ -19,6 +12,13 @@ export class IFrameResizer {
   public constructor(transport: Consumer<any, any>) {
     this.events = new EventEmitter()
     this.transport = transport
+
+    setMutationParams({
+      attributes: true,
+      childList: true,
+      subtree: true,
+      characterData: true
+    })
   }
 
   public getSize() {

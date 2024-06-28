@@ -6064,10 +6064,10 @@ lunr@^2.3.9:
   resolved "https://registry.yarnpkg.com/lunr/-/lunr-2.3.9.tgz#18b123142832337dd6e964df1a5a7707b25d35e1"
   integrity sha512-zTU3DaZaF3Rt9rhN3uBMGQD3dD2/vFQqnvZCDv4dl5iOzq2IZQqTxu90r4E5J+nP70J3ilqVCrbho2eWaeW8Ow==
 
-magic-transport@^3.0.1:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/magic-transport/-/magic-transport-3.0.1.tgz#2434819ac9556686b561573c6924ca03908cfe7c"
-  integrity sha512-yNt9+l4VIYhlWIcHcWX8g6V6DoH6KRIDGcarILpZnVQreLr5635sN+Wxna0tO08dTbAOE1EFE/+mael35PC1fg==
+magic-transport@^3.0.2:
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/magic-transport/-/magic-transport-3.0.2.tgz#34dd7c756071a0d4112b8d7c6198d4fd6f760fe7"
+  integrity sha512-qkdiuBK1xFt1NYt0OIjBodH5vUbylSfnkmSCGSRL713ltytm0zqrwfZxXnPNPC2OA4Kkm9Jy6gGFYQsu7KRyzw==
   dependencies:
     dot-prop "^3.0.0"
 

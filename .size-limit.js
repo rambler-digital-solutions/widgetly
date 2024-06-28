@@ -19,21 +19,21 @@ function modifyWebpackConfig(config) {
 module.exports = [
   {
     name: 'The size of the Mediator with Embed layout',
-    limit: '10.1 KB',
+    limit: '9.5 KB',
     path: 'dist/index.js',
     import: '{createMediator, EmbedLayout}',
     modifyWebpackConfig
   },
   {
     name: 'The size of the Mediator with Overlay layout',
-    limit: '10.2 KB',
+    limit: '9.7 KB',
     path: 'dist/index.js',
     import: '{createMediator, OverlayLayout}',
     modifyWebpackConfig
   },
   {
     name: 'The size of the Consumer',
-    limit: '7.3 KB',
+    limit: '5.3 KB',
     path: 'dist/index.js',
     import: '{registerIFrame}',
     modifyWebpackConfig

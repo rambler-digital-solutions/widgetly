@@ -9,6 +9,9 @@
     "dist",
     "src"
   ],
+  "sideEffects": [
+    "dist/utils/dom/index.js"
+  ],
   "scripts": {
     "build": "tsc && find src -type f -name \"*.css\" -exec sh -c 'cp \"$1\" \"dist/$(echo \"$1\" | sed \"s|src/||\")\"' _ {} \\;",
     "test": "jest",
@@ -34,7 +37,7 @@
     "domready": "^1.0.8",
     "lodash.debounce": "^4.0.8",
     "lodash.throttle": "^4.1.1",
-    "magic-transport": "^3.0.1"
+    "magic-transport": "^3.0.2"
   },
   "devDependencies": {
     "@commitlint/cli": "^19.0.3",
